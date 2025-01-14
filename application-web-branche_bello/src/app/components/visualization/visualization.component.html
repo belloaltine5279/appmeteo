@@ -1,0 +1,64 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Liste des données</h2>
+
+  <!-- Tableau stylisé avec Bootstrap et un espacement plus large entre les colonnes -->
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover">
+      <thead class="thead-dark">
+      <tr>
+        <th class="px-4 py-3">ID</th>
+        <th class="px-4 py-3">NUMER_STA</th>
+        <th class="px-4 py-3">Date</th>
+        <th class="px-4 py-3">PMER</th>
+        <th class="px-4 py-3">TEND</th>
+        <th class="px-4 py-3">COD_TEND</th>
+        <th class="px-4 py-3">DD</th>
+        <th class="px-4 py-3">FF</th>
+        <th class="px-4 py-3">T</th>
+        <th class="px-4 py-3">TD</th>
+        <th class="px-4 py-3">U</th>
+        <th class="px-4 py-3">VV</th>
+        <th class="px-4 py-3">WW</th>
+        <th class="px-4 py-3">N</th>
+        <th class="px-4 py-3">NBAS</th>
+        <th class="px-4 py-3">PRES</th>
+        <th class="px-4 py-3">TEND24</th>
+        <th class="px-4 py-3">TN12</th>
+        <th class="px-4 py-3">TX12</th>
+        <th class="px-4 py-3">TMINSOL</th>
+        <th class="px-4 py-3">RAF10</th>
+        <th class="px-4 py-3">RAFPER</th>
+        <th class="px-4 py-3">PER</th>
+        <th class="px-4 py-3">RR12</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let elem of data">
+        <td class="px-4 py-3">{{ elem.id }}</td>
+        <td class="px-4 py-3">{{ elem.numer_sta }}</td>
+        <td class="px-4 py-3">{{ elem.date }}</td>
+        <td class="px-4 py-3">{{ elem.pmer }}</td>
+        <td class="px-4 py-3">{{ elem.tend }}</td>
+        <td class="px-4 py-3">{{ elem.cod_tend }}</td>
+        <td class="px-4 py-3">{{ elem.ff }}</td>
+        <td class="px-4 py-3">{{ elem.t }}</td>
+        <td class="px-4 py-3">{{ elem.u }}</td>
+        <td class="px-4 py-3">{{ elem.vv }}</td>
+        <td class="px-4 py-3">{{ elem.ww }}</td>
+        <td class="px-4 py-3">{{ elem.n }}</td>
+        <td class="px-4 py-3">{{ elem.nbas }}</td>
+        <td class="px-4 py-3">{{ elem.hbas }}</td>
+        <td class="px-4 py-3">{{ elem.pres }}</td>
+        <td class="px-4 py-3">{{ elem.tend24 }}</td>
+        <td class="px-4 py-3">{{ elem.tn12 }}</td>
+        <td class="px-4 py-3">{{ elem.tx12 }}</td>
+        <td class="px-4 py-3">{{ elem.tminsol }}</td>
+        <td class="px-4 py-3">{{ elem.raf10 }}</td>
+        <td class="px-4 py-3">{{ elem.rafper }}</td>
+        <td class="px-4 py-3">{{ elem.per }}</td>
+        <td class="px-4 py-3">{{ elem.rr12 }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
