@@ -78,7 +78,7 @@ button:hover {
   display: inline-block;
   width: 24px; /* Taille de l'icône */
   height: 24px;
-  background-image: url('../../../assets/img/nuageux.png'); /* Chemin vers l'icône */
+  background-image: url('src/assets/img/nuageux.png'); /* Chemin vers l'icône */
   background-size: contain; /* Ajuste l'icône à l'intérieur */
   background-repeat: no-repeat; /* Pas de répétition */
   background-position: center; /* Centre l'icône */
