@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../../data.service';
-import {forkJoin, Observable, throwError} from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import {forkJoin, Observable, pipe, throwError} from 'rxjs';
+import { catchError, debounceTime, switchMap } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -16,12 +16,14 @@ export class InterfacemeteoComponent implements OnInit {
   data2: any[] = [];
   isfiltered: boolean = false;
   defaultCity: any = null;
+  dateFiltered : any = null ; 
 
   searchQuery: string = '';
   filteredCities: any[] = [];
   selectedCity: any = null;
   weatherData: any = null;
   weatherDataDefault: any = null;
+  datechoisie: any = null ; 
 
   selectdefault: any = null;
   weatherData2: any = null;
@@ -41,6 +43,7 @@ export class InterfacemeteoComponent implements OnInit {
       this.selectedCity = this.data2.find(city => city.ville === 'DIJON');
       if (this.selectedCity) {
         this.weatherData = this.getWeatherData(this.selectedCity.numeroStation);
+        this.datechoisie = this.getWeatherData3(this.selectedCity.numeroStation , this.datechoisie)
       }
     }, 1000);
   }
@@ -77,8 +80,8 @@ export class InterfacemeteoComponent implements OnInit {
       next: (data) => {
         this.data = data.meteo;
         this.data2 = data.localisation;
-        console.log('Données météo:', this.data);
-        console.log('Données localisation:', this.data2);
+        console.log('Données météo:', this.data.length);
+        console.log('Données localisation:', this.data2.length);
 
         this.retryAttempt = 0; // Réinitialiser le compteur en cas de succès
         this.selectDefaultCity(); // Sélectionner la ville par défaut après récupération des données
@@ -90,6 +93,7 @@ export class InterfacemeteoComponent implements OnInit {
   }
 
   selectDefaultCity(): void {
+    
     this.selectdefault = this.data2.find(city => city.ville === 'DIJON-LONGVIC');
     if (this.selectdefault) {
       this.weatherDataDefault = this.getWeatherData2(this.selectdefault.numeroStation);
@@ -106,6 +110,9 @@ export class InterfacemeteoComponent implements OnInit {
   getWeatherData2(stationNumber: any) {
     return this.data.find((data) => data.numer_sta === stationNumber);
   }
+  getWeatherData3(stationNumber: any , date : any){
+    return this.data.find((data) => data.numer_sta === stationNumber && data.date === date)
+  }
 
   viewDetails(city: any) {
     alert(`Détails pour ${city.ville}: ${city.numerostation}`);
@@ -119,6 +126,7 @@ export class InterfacemeteoComponent implements OnInit {
   makeApiRequest(): Observable<any> {
     this.selectDefaultCity();
     return this.dataService.getApidata().pipe(
+      /*
       catchError((error) => {
         if (error.status === 429 && this.retryAttempt < this.maxRetry) {
           this.retryAttempt++;
@@ -134,12 +142,14 @@ export class InterfacemeteoComponent implements OnInit {
           );
         }
         return throwError(() => error);  // En cas d'erreur autre que 429, propager l'erreur
-      })
-    );
-  }
+        */
+       debounceTime(300)
+      )
+    }
 
   makeApilocalisationRequest(): Observable<any> {
     return this.dataService.getApiLocalisation().pipe(
+      /*
       catchError((error) => {
         if (error.status === 429 && this.retryAttempt < this.maxRetry) {
           this.retryAttempt++;
@@ -157,6 +167,8 @@ export class InterfacemeteoComponent implements OnInit {
         return throwError(() => error);  // En cas d'erreur autre que 429, propager l'erreur
       })
     );
+    */
+    debounceTime(300))
   }
 
   onSearch(): void {

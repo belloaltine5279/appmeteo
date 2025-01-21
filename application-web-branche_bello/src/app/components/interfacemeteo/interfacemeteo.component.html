@@ -26,12 +26,18 @@
 <body>
 
 <div class="container mt-5">
+
+  <div>
+  
+    Nombre de données:  <h2>{{ data.length | number : '1.0-0'}} </h2>
+ 
+  </div>
   <!-- Barre de recherche -->
   <div class="row mb-4">
     <div class="col-12">
       <div class="d-flex">
         <input [(ngModel)]="searchQuery" (input)="onSearch()" class="form-control me-2" placeholder="Nom de la ville">
-        <button (click)="onSearch()" class="btn btn-primary btn-sm">Recherche</button>
+        <button (click)="onSearch()" class="btn btn-primary">Recherche</button>
       </div>
     </div>
   </div>
@@ -45,8 +51,8 @@
 
   <!-- Affichage des données météo pour la ville sélectionnée -->
   <div *ngIf="selectedCity" class="card mb-4 fade-in">
-    <div class="card-header">
-      <h2>{{ selectedCity.ville }}</h2>
+    <div class="card-header bg-primary text-white">
+      <h2 class="text-light">{{ selectedCity.ville }}</h2>
     </div>
     <div class="card-body">
       <p><strong>Station Number:</strong> {{ selectedCity.numeroStation }}</p>
@@ -117,15 +123,16 @@
       </div>
 
     </div>
-    <div class="card-footer">
-      <button (click)="viewDetails(selectedCity)" class="btn btn-secondary btn-sm w-100">Voir plus</button>
-    </div>
+
+    <div class="flex ml-auto" >Trie de la date</div>
+
+    
   </div>
 
   <!-- Affichage de la ville par défaut si aucune ville n'est sélectionnée -->
   <div *ngIf="selectdefault && !selectedCity" class="card mt-4 fade-in">
-    <div class="card-header">
-      <h2>{{ selectdefault.ville }}</h2>
+    <div class="card-header bg-primary text-white">
+      <h2 class="text-light">{{ selectdefault.ville }}</h2>
     </div>
     <div class="card-body">
       <p><strong>Station Number:</strong> {{ selectdefault.numeroStation }}</p>
@@ -167,25 +174,37 @@
       </ul>
       <div class="tab-content mt-3" id="defaultWeatherTabsContent">
         <!-- Température -->
-        <div *ngIf="activeTab === 'default-temperature'" class="tab-pane fade show active" role="tabpanel">
-          <p><strong>Temperature:</strong> {{ weatherDataDefault.t }}°C</p>
+        <div *ngIf="activeTab === 'temperature'" class="weather-details" [ngClass]="{ 'fade-in': activeTab === 'temperature' }">
+          <p><strong>Température : </strong>{{ weatherData.t | number:'1.0-0' }} °C</p>
+<!--          <p><strong>Température ressentie : </strong>{{ weatherData.tt | number:'1.0-0' }} °C</p>-->
+          <div class="mt-3">
+            <i *ngIf="weatherDataDefault.t > 20" class="weather-icon">
+              <img src="/assets/img/soleil.png" alt="Soleil" width="70" height="70">
+            </i>
+            <i *ngIf="weatherDataDefault.t < 20 && weatherDataDefault.t > 0" class="weather-icon">
+              <img src="/assets/img/nuageux.gif" alt="Nuageux" width="70" height="70">
+            </i>
+            <i *ngIf="weatherDataDefault.t <= 0" class="weather-icon">
+              <img src="/assets/img/flocon-de-neige.png" alt="Neige" width="70" height="70">
+            </i>
+          </div>
         </div>
 
         <!-- Humidité -->
         <div *ngIf="activeTab === 'default-humidity'" class="tab-pane fade" role="tabpanel">
-          <p><strong>Humidité:</strong> {{ weatherDataDefault.u }}%</p>
+          <p><strong>Humidité:</strong> {{ selectdefault.u }}%</p>
         </div>
 
         <!-- Vent -->
         <div *ngIf="activeTab === 'default-wind'" class="tab-pane fade" role="tabpanel">
-          <p><strong>Vitesse du vent:</strong> {{ weatherDataDefault.ff }} km/h</p>
+          <p><strong>Vitesse du vent:</strong> {{ selectdefault.ff }} km/h</p>
         </div>
       </div>
 
     </div>
 
     <div class="card-footer">
-      <button (click)="viewDetails(selectdefault)" class="btn btn-secondary btn-sm w-100">Voir plus</button>
+      <button (click)="viewDetails(selectdefault)" class="btn btn-primary w-100">Voir plus</button>
     </div>
 </div>
 </div>
