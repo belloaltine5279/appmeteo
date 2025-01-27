@@ -9,7 +9,7 @@ import { catchError } from 'rxjs/operators';
 export class DataService {
   // private apiUrl = 'https://ipinfo.io/161.185.160.93/geo'; // Base URL for the API
   //private apiUrl = 'http://universities.hipolabs.com/search?country=United+States'; // Base URL for the API
-  private apiUrl_donneclimatique = 'http://172.31.60.248:8080/api/donnees-climatiques'
+  private apiUrl_donneclimatique = 'http://172.31.60.248:8080/api/donnees-climatiques/ville/DIJON-LONGVIC?dateDebut=2020-01-01&dateFin=2020-12-31'
   private apiUrl_localisation = 'http://172.31.60.248:8080/api/localisations'
   //private apiUrl = "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m"
   // ip = 161.185.160.93
