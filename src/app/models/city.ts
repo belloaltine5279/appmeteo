@@ -1,7 +1,10 @@
 
 export interface City {
-    name: string;
-    latitude: number;
-    longitude: number;
-  }
+  id: number;
+  numeroStation: number;
+  ville: string;
+  latitude: number;
+  longitude: number;
+  altitude: number;
+}
   

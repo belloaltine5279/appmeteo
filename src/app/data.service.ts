@@ -7,16 +7,12 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class DataService {
-  private apiUrl_donneclimatique = 'http://172.31.60.248:8080/api/donnees-climatiques'
   private apiUrl_localisation = 'http://172.31.60.248:8080/api/localisations'
   private apiClimatTotal = "http://172.31.60.248:8080/api/donnees-climatiques/count"
 
   constructor(private http: HttpClient) {}
-  getApidata() : Observable<any> {
-    return this.http.get(this.apiUrl_donneclimatique);
-  }
-
-  getApiLocalisation() : Observable<any> {
+ 
+  getLocalisations() : Observable<any> {
     return this.http.get(this.apiUrl_localisation);
   }
 

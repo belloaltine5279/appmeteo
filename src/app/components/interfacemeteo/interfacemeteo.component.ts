@@ -18,6 +18,7 @@ import { City } from '../../models/city';
 
 export class InterfacemeteoComponent implements OnInit {
   total: number = 0;
+  loc: [] = [];
 
   weatherData: WeatherDay[] = [];
   selectedDay: WeatherDay | null = null;
@@ -27,28 +28,15 @@ export class InterfacemeteoComponent implements OnInit {
   showSuggestions: boolean = false;
   filteredCities: City[] = [];
 
-  cities: City[] = [
-    { name: 'Paris', latitude: 48.8566, longitude: 2.3522 },
-    { name: 'Lyon', latitude: 45.7578, longitude: 4.8320 },
-    { name: 'Marseille', latitude: 43.2965, longitude: 5.3698 },
-    { name: 'Bordeaux', latitude: 44.8378, longitude: -0.5792 },
-    { name: 'Lille', latitude: 50.6292, longitude: 3.0573 },
-    { name: 'Toulouse', latitude: 43.6047, longitude: 1.4442 },
-    { name: 'Nice', latitude: 43.7102, longitude: 7.2620 },
-    { name: 'Nantes', latitude: 47.2184, longitude: -1.5536 },
-    { name: 'Strasbourg', latitude: 48.5734, longitude: 7.7521 },
-    { name: 'Montpellier', latitude: 43.6108, longitude: 3.8767 }
-  ];
+  cities: City[] = [];
 
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
     this.loadTotal();
-    this.searchCity = 'Paris';
+    this.getLocations();
     this.selectedDate = new Date().toISOString().split('T')[0];
-    const paris = this.cities[0];
-    this.generateWeatherData(paris, new Date());
   }
 
   private loadTotal(): void {
@@ -63,6 +51,26 @@ export class InterfacemeteoComponent implements OnInit {
     });
   }
 
+  private getLocations(): void {
+    this.dataService.getLocalisations().subscribe({
+      next: (response: City[]) => {
+        this.cities = response;
+        console.log('Villes chargées:', this.cities);
+        
+        const paris = this.cities.find(c => c.ville.includes('DIJON')) || this.cities[0];
+        if (paris) {
+          this.searchCity = paris.ville;
+          this.generateWeatherData(paris, new Date());
+        }
+      },
+      error: (err) => {
+        console.error('Erreur:', err);
+      }
+    });
+  }
+
+
+
 
 
 
@@ -70,7 +78,7 @@ export class InterfacemeteoComponent implements OnInit {
     if (this.searchCity.trim()) {
       this.showSuggestions = true;
       this.filteredCities = this.cities.filter(city =>
-        city.name.toLowerCase().includes(this.searchCity.toLowerCase())
+        city.ville.toLowerCase().includes(this.searchCity.toLowerCase())
       );
     } else {
       this.showSuggestions = false;
@@ -79,7 +87,7 @@ export class InterfacemeteoComponent implements OnInit {
   }
 
   selectCity(city: City) {
-    this.searchCity = city.name;
+    this.searchCity = city.ville;
     this.showSuggestions = false;
     if (this.selectedDate) {
       this.generateWeatherData(city, new Date(this.selectedDate));
@@ -97,10 +105,10 @@ export class InterfacemeteoComponent implements OnInit {
   generateHourlyData(baseTemp: number, date: Date): HourlyWeather[] {
     const hours = [];
     const conditions = [
-      { name: 'Ensoleillé', icon: '☀️' },
-      { name: 'Nuageux', icon: '☁️' },
-      { name: 'Pluvieux', icon: '🌧️' },
-      { name: 'Partiellement nuageux', icon: '⛅' }
+      { ville: 'Ensoleillé', icon: '☀️' },
+      { ville: 'Nuageux', icon: '☁️' },
+      { ville: 'Pluvieux', icon: '🌧️' },
+      { ville: 'Partiellement nuageux', icon: '⛅' }
     ];
 
     const seed = date.getTime();
@@ -116,7 +124,7 @@ export class InterfacemeteoComponent implements OnInit {
       hours.push({
         time: `${hour.toString().padStart(2, '0')}:00`,
         temperature: Math.round(baseTemp + tempVariation),
-        condition: condition.name,
+        condition: condition.ville,
         icon: condition.icon
       });
     }
@@ -126,10 +134,10 @@ export class InterfacemeteoComponent implements OnInit {
 
   generateWeatherData(city: City, startDate: Date) {
     const conditions = [
-      { name: 'Ensoleillé', icon: '☀️' },
-      { name: 'Nuageux', icon: '☁️' },
-      { name: 'Pluvieux', icon: '🌧️' },
-      { name: 'Partiellement nuageux', icon: '⛅' }
+      { ville: 'Ensoleillé', icon: '☀️' },
+      { ville: 'Nuageux', icon: '☁️' },
+      { ville: 'Pluvieux', icon: '🌧️' },
+      { ville: 'Partiellement nuageux', icon: '⛅' }
     ];
 
     this.weatherData = [];
@@ -150,7 +158,7 @@ export class InterfacemeteoComponent implements OnInit {
       this.weatherData.push({
         date: date,
         temperature: baseTemp,
-        condition: condition.name,
+        condition: condition.ville,
         icon: condition.icon,
         humidity: Math.floor(40 + pseudoRandom(3) * 50),
         windSpeed: Math.floor(5 + pseudoRandom(4) * 25),
@@ -165,7 +173,7 @@ export class InterfacemeteoComponent implements OnInit {
   onSearch() {
     if (this.searchCity && this.selectedDate) {
       const city = this.cities.find(c => 
-        c.name.toLowerCase().includes(this.searchCity.toLowerCase())
+        c.ville.toLowerCase().includes(this.searchCity.toLowerCase())
       );
       
       if (city) {
@@ -179,7 +187,7 @@ export class InterfacemeteoComponent implements OnInit {
   onDateChange() {
     if (this.searchCity && this.selectedDate) {
       const city = this.cities.find(c => 
-        c.name.toLowerCase().includes(this.searchCity.toLowerCase())
+        c.ville.toLowerCase().includes(this.searchCity.toLowerCase())
       );
       
       if (city) {

@@ -14,8 +14,9 @@ import { FormsModule } from '@angular/forms';
 })
 export class VisualizationComponent implements OnInit {
   data: any [] = [];
-
-
+  ngOnInit(): void {
+  }
+/*
 
   searchQuery: string = '';
   filteredCities: any[] = [];
@@ -122,5 +123,5 @@ export class VisualizationComponent implements OnInit {
     );
     this.filteredCities = []; // Masquer la liste des suggestions après sélection
   }
-
+*/
 }

@@ -36,6 +36,7 @@
     Météo historique
   </h1>
   
+  
   <div class="search-container">
     <div class="search-wrapper">
       <input
@@ -47,12 +48,12 @@
       />
       @if (showSuggestions && filteredCities.length > 0) {
         <div class="suggestions-container">
-          @for (city of filteredCities; track city.name) {
+          @for (city of filteredCities; track city.ville) {
             <div 
               class="suggestion-item"
               (click)="selectCity(city)"
             >
-              {{ city.name }}
+              {{ city.ville }}
             </div>
           }
         </div>
