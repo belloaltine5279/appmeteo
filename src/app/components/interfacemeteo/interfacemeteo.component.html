@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application Météo</title>
+  <!-- Bootstrap CSS (version 5.3) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome pour les icônes -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <!-- Animation CSS -->
+  <style>
+    .fade-in { animation: fadeIn 0.5s ease-in; }
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    .weather-icon {
+      transition: transform 0.3s ease;
+    }
+    .weather-icon:hover {
+      transform: scale(1.2);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-5">
+  
+    Nombre de données:  <h2>{{ total | number : '1.0-0'}} </h2>
+ 
+  
+</div>
+<div style="padding: 20px;">
+  <h1 style="color: white; text-align: center; font-size: 2.5em; margin-bottom: 30px;">
+    Météo historique
+  </h1>
+  
+  <div class="search-container">
+    <div class="search-wrapper">
+      <input
+        type="text"
+        class="search-input"
+        [(ngModel)]="searchCity"
+        (input)="onSearchInput()"
+        placeholder="Rechercher une ville..."
+      />
+      @if (showSuggestions && filteredCities.length > 0) {
+        <div class="suggestions-container">
+          @for (city of filteredCities; track city.name) {
+            <div 
+              class="suggestion-item"
+              (click)="selectCity(city)"
+            >
+              {{ city.name }}
+            </div>
+          }
+        </div>
+      }
+    </div>
+    <input
+      type="date"
+      class="date-input"
+      [(ngModel)]="selectedDate"
+      (change)="onDateChange()"
+      [min]="'1996-01-01'"
+      [max]="maxDate"
+    />
+  </div>
+
+  @if (weatherData.length > 0) {
+    <div class="weather-grid">
+      @for (day of weatherData; track day.date) {
+        <div class="weather-card" (click)="showDetails(day)">
+          <div class="date">{{ day.date | date:'EEEE d MMMM yyyy' }}</div>
+          <div class="weather-icon">{{ day.icon }}</div>
+          <div class="temperature">{{ day.temperature }}°C</div>
+          <div class="condition">{{ day.condition }}</div>
+          
+          <div class="tab-container">
+            <div class="info-tab">
+              <div style="font-weight: bold;">Humidité</div>
+              {{ day.humidity }}%
+            </div>
+            <div class="info-tab">
+              <div style="font-weight: bold;">Vent</div>
+              {{ day.windSpeed }} km/h
+            </div>
+          </div>
+          
+          <div class="tab-container" style="margin-top: 10px;">
+            <div class="info-tab">
+              <div style="font-weight: bold;">Coordonnées</div>
+              {{ day.latitude }}°N, {{ day.longitude }}°E
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="no-results">
+      Aucune donnée météo disponible pour cette ville ou cette date.
+      Veuillez sélectionner une ville et une date valides.
+    </div>
+  }
+
+  @if (selectedDay) {
+    <div class="fullscreen-details">
+      <button class="back-button" (click)="closeDetails()">
+        ← Retour
+      </button>
+      
+      <div class="details-content">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <div class="date" style="font-size: 1.5em;">
+            {{ selectedDay.date | date:'EEEE d MMMM yyyy' }}
+          </div>
+          <div class="weather-icon" style="font-size: 3em;">
+            {{ selectedDay.icon }}
+          </div>
+          <div class="temperature" style="font-size: 3em;">
+            {{ selectedDay.temperature }}°C
+          </div>
+          <div class="condition" style="font-size: 1.3em;">
+            {{ selectedDay.condition }}
+          </div>
+        </div>
+
+        <div class="tab-container" style="margin-bottom: 30px;">
+          <div class="info-tab">
+            <div style="font-weight: bold;">Humidité</div>
+            {{ selectedDay.humidity }}%
+          </div>
+          <div class="info-tab">
+            <div style="font-weight: bold;">Vent</div>
+            {{ selectedDay.windSpeed }} km/h
+          </div>
+          <div class="info-tab">
+            <div style="font-weight: bold;">Coordonnées</div>
+            {{ selectedDay.latitude }}°N, {{ selectedDay.longitude }}°E
+          </div>
+        </div>
+
+        <h2 style="color: #2c3e50; margin-bottom: 20px;">Prévisions horaires</h2>
+        <div class="hourly-grid">
+          @for (hour of selectedDay.hourlyData; track hour.time) {
+            <div class="hourly-card">
+              <div class="time">{{ hour.time }}</div>
+              <div class="icon">{{ hour.icon }}</div>
+              <div class="temp">{{ hour.temperature }}°C</div>
+              <div class="condition">{{ hour.condition }}</div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

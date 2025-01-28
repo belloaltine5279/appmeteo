@@ -1,0 +1,45 @@
+<h1>Connexion / Inscription</h1>
+
+<!-- Formulaire de Connexion -->
+<section>
+  <h2>Connexion</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <label for="email">Email :</label>
+    <input type="email" id="email" formControlName="email" />
+    <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+      <small *ngIf="loginForm.get('email')?.errors?.['required']">Email requis.</small>
+      <small *ngIf="loginForm.get('email')?.errors?.['email']">Email invalide.</small>
+    </div>
+
+    <label for="password">Mot de passe :</label>
+    <input type="password" id="password" formControlName="password" />
+    <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+      <small *ngIf="loginForm.get('password')?.errors?.['required']">Mot de passe requis.</small>
+      <small *ngIf="loginForm.get('password')?.errors?.['minlength']">6 caractères minimum.</small>
+    </div>
+
+    <button type="submit" [disabled]="loginForm.invalid">Se connecter</button>
+  </form>
+</section>
+
+<!-- Formulaire d'Inscription -->
+<section>
+  <h2>Inscription</h2>
+  <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+    <label for="new-email">Email :</label>
+    <input type="email" id="new-email" formControlName="email" />
+    <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+      <small *ngIf="registerForm.get('email')?.errors?.['required']">Email requis.</small>
+      <small *ngIf="registerForm.get('email')?.errors?.['email']">Email invalide.</small>
+    </div>
+
+    <label for="new-password">Mot de passe :</label>
+    <input type="password" id="new-password" formControlName="password" />
+    <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+      <small *ngIf="registerForm.get('password')?.errors?.['required']">Mot de passe requis.</small>
+      <small *ngIf="registerForm.get('password')?.errors?.['minlength']">6 caractères minimum.</small>
+    </div>
+
+    <button type="submit" [disabled]="registerForm.invalid">S'inscrire</button>
+  </form>
+</section>
