@@ -1,0 +1,9 @@
+/* You can add global styles to this file, and also import other style files */
+table {
+  border: 1px solid #dee2e6; /* Bordures extérieures */
+}
+
+table th, table td {
+  border: 1px solid #dee2e6; /* Bordures internes */
+  padding: 10px;
+}
