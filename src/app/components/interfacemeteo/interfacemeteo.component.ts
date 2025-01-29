@@ -22,6 +22,10 @@ export class InterfacemeteoComponent implements OnInit {
   data: Data[] = [];
   data_details: Data[]= [];
 
+  infoCity: City = { id: 0, numeroStation: 0, ville: '', latitude: 0, longitude: 0, altitude: 0 };
+
+
+
 
   weatherData: WeatherDay[] = [];
   selectedDay: WeatherDay | null = null;
@@ -85,6 +89,15 @@ export class InterfacemeteoComponent implements OnInit {
     
   }
 
+  calculateFeelsLike(temp: number, windSpeed: number, humidity: number, dewPoint: number): number {
+    if (temp <= 10 && windSpeed > 5) {
+      return 13.12 + 0.6215 * temp - 11.37 * Math.pow(windSpeed, 0.16) + 0.3965 * temp * Math.pow(windSpeed, 0.16);
+    } else if (temp >= 20 && humidity > 40) {
+      return temp + 0.5555 * (6.11 * Math.exp(5417.7530 * ((1/273.16) - (1/(dewPoint + 273.16)))) - 10);
+    }
+    return temp;
+  }
+
   calculateAverageForAllParams(dataList: Data[]): Data {
     const paramsToExclude = ['id', 'date'];
     const averages: Partial<Data> = {}; 
@@ -131,10 +144,10 @@ export class InterfacemeteoComponent implements OnInit {
         this.cities = response;
         console.log('Villes chargées:', this.cities);
         
-        const paris = this.cities.find(c => c.ville.includes('DIJON')) || this.cities[0];
-        if (paris) {
-          this.searchCity = paris.ville;
-          this.generateWeatherData(paris, new Date());
+        const c = this.cities.find(c => c.ville.includes('DIJON')) || this.cities[0];
+        if ( c ) {
+          this.searchCity =  c .ville;
+          this.generateWeatherData( c , new Date());
         }
       },
       error: (err) => {
@@ -209,6 +222,10 @@ export class InterfacemeteoComponent implements OnInit {
 
   generateWeatherData(city: City, startDate: Date) {
     this.weatherData = [];
+
+    this.infoCity = city;
+
+
     this.getInfo(city.numeroStation)
     setTimeout(() => {
       console.log("Données dans data après un délai:", this.data);
@@ -224,9 +241,14 @@ export class InterfacemeteoComponent implements OnInit {
           condition: condition[0],
           icon: condition[1],
           humidity: d.u,
+          prose: d.td,
+          windQuality: this.windQuality(d.u, d.ff, d.t, d.rr12),
+          visibility: Math.round(d.vv/1000),
           windSpeed: d.ff,
+          realFeel: Math.round(this.calculateFeelsLike(d.t, d.ff, d.u, d.td)),
           windDirection: this.getWindDirection(d.dd).split(" ")[0],
           precipitation: d.rr12,
+          pmer: d.pmer / 100000,
           latitude: city.latitude,
           longitude: city.longitude,
           hourlyData: this.generateHourlyData(d.t, d.date)
@@ -238,6 +260,28 @@ export class InterfacemeteoComponent implements OnInit {
       
     }, 100);
   }
+
+  windQuality(humidity: number, windSpeed: number, temperature: number, precipitation: number = 0): string {
+    let score = 100;
+
+    if (windSpeed < 5) score -= 30; 
+    else if (windSpeed > 20) score += 10; 
+
+ 
+    if (humidity > 80) score -= 20;
+    else if (humidity < 30) score += 10;
+
+    if (temperature > 30) score -= 20;
+    else if (temperature < 5) score -= 10;
+
+    if (precipitation > 0) score += 20;
+
+    if (score >= 80) return "Bonne alert-success";
+    if (score >= 60) return "Acceptable alert-info";
+    if (score >= 40) return "Médiocre alert-warning";
+    if (score >= 20) return "Mauvaise alert-danger";
+    return "Très mauvaise alert-secondary";
+}
 
 
   formatDateEN(dateString: string): string {

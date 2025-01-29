@@ -68,13 +68,42 @@
     />
   </div>
 
+  <div class="popover__wrapper">
+    <div href="#">
+      <div class="weather-card">
+        <div>Ville: <span class="fw-bold">{{infoCity.ville}}</span></div>
+        <div>N° station: <span class="fw-bold">{{infoCity.numeroStation}}</span></div>
+        <div>Coordonnées:
+          <span class="fw-bold">
+            <a [href]="'https://www.google.com/maps?q=' + infoCity.latitude + ',' + infoCity.longitude" 
+            target="_blank" 
+            style="text-decoration: none; color: blue;">
+           {{ infoCity.latitude }}, {{ infoCity.longitude }}
+         </a>
+        </span></div>
+      </div>
+    </div>
+    <div class="popover__content">
+      <p class="popover__message">{{infoCity.ville}}</p>
+      <img alt="{{infoCity.ville}}" src="https://media.giphy.com/media/11SIBu3s72Co8w/giphy.gif">
+    </div>
+  </div>
+
+  
+
   @if (weatherData.length > 0) {
     <div class="weather-grid">
       @for (day of weatherData; track day.date) {
         <div class="weather-card" (click)="showDetails(day)">
           <div class="date">{{ day.date | date:'EEEE d MMMM yyyy' }}</div>
           <div class="weather-icon text-center">{{ day.icon }}</div>
-          <div class="temperature text-center">{{ day.temperature }}°C</div>
+          <div class="text-center">
+            <div class="d-flex justify-content-center align-items-center">
+              <div class="temperature text-center">{{ day.temperature }}°</div>
+              <div class="fs-2">C</div>
+            </div>
+            <div>Ressenti <span class="fw-bold fs-4">{{ day.realFeel }}°C</span></div>
+          </div>
           <div class="condition text-center">{{ day.condition }}</div>
           
           <div class="d-flex justify-content-between text-center">
@@ -99,12 +128,8 @@
           <div class="tab-container text-center" style="margin-top: 10px;">
             <div class="info-tab">
               
-              <div style="font-weight: bold;">Coordonnées</div>
-              <a [href]="'https://www.google.com/maps?q=' + day.latitude + ',' + day.longitude" 
-     target="_blank" 
-     style="text-decoration: none; color: blue;">
-    {{ day.latitude }}, {{ day.longitude }}
-  </a>
+              <div style="font-weight: bold;">Pression de la mer</div>
+              <div>{{ day.pmer }} b</div>
             </div>
           </div>
         </div>
@@ -153,16 +178,27 @@
             {{ selectedDay.precipitation }} %
           </div>
         </div>
-        <div class="tab-container text-center">
-          <div class="info-tab">
-  <div style="font-weight: bold;">Coordonnées</div>
-  <a [href]="'https://www.google.com/maps?q=' + selectedDay.latitude + ',' + selectedDay.longitude" 
-     target="_blank" 
-     style="text-decoration: none; color: blue;">
-    {{ selectedDay.latitude }}, {{ selectedDay.longitude }}
-  </a>
-</div>
 
+        <div class="d-flex justify-content-between text-center" style="margin-bottom: 30px;">
+          <div class="info-tab details-view">
+            <div style="font-weight: bold;">Pression de la mer</div>
+            {{ selectedDay.pmer }} b
+          </div>
+          <div class="info-tab details-view">
+            <div style="font-weight: bold;">Point de rosée</div>
+            {{ selectedDay.prose }}°C
+          </div>
+          <div class="info-tab details-view">
+            <div style="font-weight: bold;">Visibilité</div>
+            {{ selectedDay.visibility }} km
+          </div>
+        </div>
+        <div class="tab-container text-center" style="margin-top: 10px;">
+          <div class="info-tab">
+            
+            <div style="font-weight: bold;">Qualité de l'air</div>
+            <div class="alert {{ selectedDay.windQuality.split(' ')[1] }}">{{ selectedDay.windQuality.split(" ")[0] }}</div>
+          </div>
         </div>
 
         <div class="mt-5">
@@ -180,6 +216,8 @@
             }
           </div>
         </div>
+
+        
         
       </div>
     </div>
