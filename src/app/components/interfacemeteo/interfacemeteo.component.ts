@@ -57,24 +57,24 @@ export class InterfacemeteoComponent implements OnInit {
   groupByDate(dataList: Data[]): void{
     const groupedData: Data[][] = [];
     const tempGroup: { [date: string]: Data[] } = {};
-  
+
     dataList.forEach((data) => {
-      const date = new Date(data.date).toISOString().split('T')[0];
-  
-      if (!tempGroup[date]) {
-        tempGroup[date] = [];
-      }
-  
-      tempGroup[date].push(data);
+        const date = new Date(data.date).toLocaleDateString('fr-CA');  
+
+        if (!tempGroup[date]) {
+            tempGroup[date] = [];
+        }
+
+        tempGroup[date].push(data);
     });
-  
+
     for (const date in tempGroup) {
-      if (tempGroup.hasOwnProperty(date)) {
-        groupedData.push(tempGroup[date]);
-      }
+        if (tempGroup.hasOwnProperty(date)) {
+            groupedData.push(tempGroup[date]);
+        }
     }
   
-    //console.log("voici le tri: ", groupedData);
+    console.log("voici le tri: ", groupedData);
     this.data = [];
     groupedData.forEach((g) => {
       //console.log(this.calculateAverageForAllParams(g));
