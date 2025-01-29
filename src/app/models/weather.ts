@@ -6,6 +6,8 @@ export interface WeatherDay {
     condition: string;
     humidity: number;
     windSpeed: number;
+    precipitation: number;
+    windDirection: string;
     latitude: number;
     longitude: number;
     icon: string;

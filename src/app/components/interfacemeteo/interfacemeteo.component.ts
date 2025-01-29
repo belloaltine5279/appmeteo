@@ -188,7 +188,7 @@ export class InterfacemeteoComponent implements OnInit {
       const time  = daily.date.split(" ")[1].slice(0, 5);
       hours.push({
         time: time,
-        temperature: daily.t,
+        temperature: Math.round(daily.t),
         condition: condition[0],
         icon: condition[1]
       });
@@ -225,6 +225,8 @@ export class InterfacemeteoComponent implements OnInit {
           icon: condition[1],
           humidity: d.u,
           windSpeed: d.ff,
+          windDirection: this.getWindDirection(d.dd).split(" ")[0],
+          precipitation: d.rr12,
           latitude: city.latitude,
           longitude: city.longitude,
           hourlyData: this.generateHourlyData(d.t, d.date)
@@ -259,6 +261,28 @@ export class InterfacemeteoComponent implements OnInit {
       return 'Nuageux ☁️';
     } else {
       return 'Froid ❄️';
+    }
+  }
+  
+  getWindDirection(degree: number): string {
+    if (degree >= 337.5 || degree < 22.5) {
+      return '⬆️ Nord';
+    } else if (degree >= 22.5 && degree < 67.5) {
+      return '↗️ Nord-Est';
+    } else if (degree >= 67.5 && degree < 112.5) {
+      return '➡️ Est';
+    } else if (degree >= 112.5 && degree < 157.5) {
+      return '↘️ Sud-Est';
+    } else if (degree >= 157.5 && degree < 202.5) {
+      return '⬇️ Sud';
+    } else if (degree >= 202.5 && degree < 247.5) {
+      return '↙️ Sud-Ouest';
+    } else if (degree >= 247.5 && degree < 292.5) {
+      return '⬅️ Ouest';
+    } else if (degree >= 292.5 && degree < 337.5) {
+      return '↖️ Nord-Ouest';
+    } else {
+      return '❓ Inconnue';
     }
   }
   

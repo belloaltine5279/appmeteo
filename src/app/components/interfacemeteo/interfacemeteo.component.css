@@ -121,44 +121,54 @@ body {
 
 .weather-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  padding: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 10px;
+  padding: 10px;
   max-width: 1400px;
   margin: 0 auto;
 }
 
+@media (max-width: 1088px) { 
+  .weather-grid{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: stretch;
+    align-content: stretch;
+
+  }
+ }
+
+
 .weather-card {
   background: rgba(255, 255, 255, 0.9);
   border-radius: 15px;
-  padding: 20px;
+  padding: 10px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  margin: 10px;
+  margin: 5px;
+  width: 320px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   animation: fadeIn 0.5s ease-out;
   cursor: pointer;
 }
 
-.weather-card:hover {
+.weather-card:hover, .hourly-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-}
-
-.tab-container {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
 }
 
 .info-tab {
   background: rgba(255, 255, 255, 0.8);
   padding: 8px 12px;
   border-radius: 8px;
-  font-size: 0.9em;
-  flex: 1;
-  text-align: center;
   transition: background-color 0.3s ease;
   animation: slideIn 0.5s ease-out;
+}
+
+.details-view {
+  width: 200px;
+  height: 60px;
 }
 
 .info-tab:hover {
@@ -225,6 +235,7 @@ body {
   padding: 15px;
   border-radius: 15px;
   text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   animation: fadeIn 0.5s ease-out;
 }
 

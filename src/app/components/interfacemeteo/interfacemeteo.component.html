@@ -23,18 +23,17 @@
     }
   </style>
 </head>
-<body>
+<body class="bg-dark">
 
-<div class="container mt-5">
-  
-    Nombre de données:  <h2>{{ total | number : '1.0-0'}} </h2>
- 
-  
-</div>
+
 <div style="padding: 20px;">
   <h1 style="color: white; text-align: center; font-size: 2.5em; margin-bottom: 30px;">
     Météo historique
   </h1>
+
+  <div class="container d-flex justify-center align-items-center gap-1">
+    <span class="fs-4">Nombre de données:</span>  <h2 class="text-white btn btn-danger">{{ total | number : '1.0-0'}} </h2>
+</div>
   
   
   <div class="search-container">
@@ -74,25 +73,38 @@
       @for (day of weatherData; track day.date) {
         <div class="weather-card" (click)="showDetails(day)">
           <div class="date">{{ day.date | date:'EEEE d MMMM yyyy' }}</div>
-          <div class="weather-icon">{{ day.icon }}</div>
-          <div class="temperature">{{ day.temperature }}°C</div>
-          <div class="condition">{{ day.condition }}</div>
+          <div class="weather-icon text-center">{{ day.icon }}</div>
+          <div class="temperature text-center">{{ day.temperature }}°C</div>
+          <div class="condition text-center">{{ day.condition }}</div>
           
-          <div class="tab-container">
+          <div class="d-flex justify-content-between text-center">
             <div class="info-tab">
               <div style="font-weight: bold;">Humidité</div>
-              {{ day.humidity }}%
+              {{ day.humidity }} %
             </div>
             <div class="info-tab">
-              <div style="font-weight: bold;">Vent</div>
-              {{ day.windSpeed }} km/h
+              <div class="d-flex gap-1">
+                <div class="fw-bold">Vent</div>
+                <div>{{ day.windDirection }} </div>
+              </div>
+              <div>{{ day.windSpeed }} km/h</div>
+            </div>
+
+            <div class="info-tab">
+              <div style="font-weight: bold;">Précipitation</div>
+              {{ day.precipitation }} %
             </div>
           </div>
           
-          <div class="tab-container" style="margin-top: 10px;">
+          <div class="tab-container text-center" style="margin-top: 10px;">
             <div class="info-tab">
+              
               <div style="font-weight: bold;">Coordonnées</div>
-              {{ day.latitude }}°N, {{ day.longitude }}°E
+              <a [href]="'https://www.google.com/maps?q=' + day.latitude + ',' + day.longitude" 
+     target="_blank" 
+     style="text-decoration: none; color: blue;">
+    {{ day.latitude }}, {{ day.longitude }}
+  </a>
             </div>
           </div>
         </div>
@@ -127,32 +139,48 @@
           </div>
         </div>
 
-        <div class="tab-container" style="margin-bottom: 30px;">
-          <div class="info-tab">
+        <div class="d-flex justify-content-between text-center" style="margin-bottom: 30px;">
+          <div class="info-tab details-view">
             <div style="font-weight: bold;">Humidité</div>
             {{ selectedDay.humidity }}%
           </div>
-          <div class="info-tab">
-            <div style="font-weight: bold;">Vent</div>
+          <div class="info-tab details-view">
+            <div style="font-weight: bold;">Vent {{ selectedDay.windDirection }}</div>
             {{ selectedDay.windSpeed }} km/h
           </div>
-          <div class="info-tab">
-            <div style="font-weight: bold;">Coordonnées</div>
-            {{ selectedDay.latitude }}°N, {{ selectedDay.longitude }}°E
+          <div class="info-tab details-view">
+            <div style="font-weight: bold;">Précipitation</div>
+            {{ selectedDay.precipitation }} %
           </div>
         </div>
+        <div class="tab-container text-center">
+          <div class="info-tab">
+  <div style="font-weight: bold;">Coordonnées</div>
+  <a [href]="'https://www.google.com/maps?q=' + selectedDay.latitude + ',' + selectedDay.longitude" 
+     target="_blank" 
+     style="text-decoration: none; color: blue;">
+    {{ selectedDay.latitude }}, {{ selectedDay.longitude }}
+  </a>
+</div>
 
-        <h2 style="color: #2c3e50; margin-bottom: 20px;">Prévisions horaires</h2>
-        <div class="hourly-grid">
-          @for (hour of selectedDay.hourlyData; track hour.time) {
-            <div class="hourly-card">
-              <div class="time">{{ hour.time }}</div>
-              <div class="icon">{{ hour.icon }}</div>
-              <div class="temp">{{ hour.temperature }}°C</div>
-              <div class="condition">{{ hour.condition }}</div>
-            </div>
-          }
         </div>
+
+        <div class="mt-5">
+          <h2 style="color: #2c3e50; margin-bottom: 20px;" class="fw-semibold fs-4 fst-italic">
+            Prévisions horaires
+          </h2>
+          <div class="hourly-grid">
+            @for (hour of selectedDay.hourlyData; track hour.time) {
+              <div class="hourly-card">
+                <div class="time">{{ hour.time }}</div>
+                <div class="icon weather-icon">{{ hour.icon }}</div>
+                <div class="temp">{{ hour.temperature }}°C</div>
+                <div class="condition">{{ hour.condition }}</div>
+              </div>
+            }
+          </div>
+        </div>
+        
       </div>
     </div>
   }
