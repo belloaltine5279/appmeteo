@@ -178,35 +178,34 @@ export class InterfacemeteoComponent implements OnInit {
     this.selectedDay = null;
   }
 
-  generateHourlyData(baseTemp: number, date: Date): HourlyWeather[] {
-    const hours = [];
-    const conditions = [
-      { ville: 'Ensoleillé', icon: '☀️' },
-      { ville: 'Nuageux', icon: '☁️' },
-      { ville: 'Pluvieux', icon: '🌧️' },
-      { ville: 'Partiellement nuageux', icon: '⛅' }
-    ];
+  generateHourlyData(baseTemp: number, date: string): HourlyWeather[] {
 
-    const seed = date.getTime();
-    const pseudoRandom = (n: number) => {
-      return ((Math.sin(seed * n) + 1) / 2);
-    };
+    const daily_data= this.filterByDate(this.data_details, date);
+    const hours:HourlyWeather[] = [];
 
-    for (let hour = 0; hour < 24; hour += 3) {
-      const conditionIndex = Math.floor(pseudoRandom(hour + 1) * conditions.length);
-      const condition = conditions[conditionIndex];
-      const tempVariation = (pseudoRandom(hour + 2) * 4) - 2;
-
+    daily_data.forEach((daily) => {
+      const condition = this.getWeatherCondition(daily.t, daily.rr12).split(" ");
+      const time  = daily.date.split(" ")[1].slice(0, 5);
       hours.push({
-        time: `${hour.toString().padStart(2, '0')}:00`,
-        temperature: Math.round(baseTemp + tempVariation),
-        condition: condition.ville,
-        icon: condition.icon
+        time: time,
+        temperature: daily.t,
+        condition: condition[0],
+        icon: condition[1]
       });
-    }
-
+    })
+    
     return hours;
   }
+
+  filterByDate(dataList: Data[], dateToMatch: string): Data[] {
+    const targetDate = new Date(dateToMatch).toLocaleDateString('fr-CA'); 
+    const filteredData = dataList.filter(data => {
+        const dataDate = new Date(data.date).toLocaleDateString('fr-CA');
+        return dataDate === targetDate;
+    });
+
+    return filteredData;
+}
 
   generateWeatherData(city: City, startDate: Date) {
     this.weatherData = [];
@@ -228,10 +227,13 @@ export class InterfacemeteoComponent implements OnInit {
           windSpeed: d.ff,
           latitude: city.latitude,
           longitude: city.longitude,
-          hourlyData: this.generateHourlyData(d.t, date)
+          hourlyData: this.generateHourlyData(d.t, d.date)
         });
 
+        console.log(this.filterByDate(this.data_details, d.date));
       })
+
+      
     }, 100);
   }
 
