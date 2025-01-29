@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import {HourlyWeather} from '../../models/hourly';
 import { WeatherDay } from '../../models/weather';
 import { City } from '../../models/city';
+import { Data } from '../../models/data';
 
 
 @Component({
@@ -18,7 +19,9 @@ import { City } from '../../models/city';
 
 export class InterfacemeteoComponent implements OnInit {
   total: number = 0;
-  loc: [] = [];
+  data: Data[] = [];
+  data_details: Data[]= [];
+
 
   weatherData: WeatherDay[] = [];
   selectedDay: WeatherDay | null = null;
@@ -51,6 +54,77 @@ export class InterfacemeteoComponent implements OnInit {
     });
   }
 
+  groupByDate(dataList: Data[]): void{
+    const groupedData: Data[][] = [];
+    const tempGroup: { [date: string]: Data[] } = {};
+  
+    dataList.forEach((data) => {
+      const date = new Date(data.date).toISOString().split('T')[0];
+  
+      if (!tempGroup[date]) {
+        tempGroup[date] = [];
+      }
+  
+      tempGroup[date].push(data);
+    });
+  
+    for (const date in tempGroup) {
+      if (tempGroup.hasOwnProperty(date)) {
+        groupedData.push(tempGroup[date]);
+      }
+    }
+  
+    //console.log("voici le tri: ", groupedData);
+    this.data = [];
+    groupedData.forEach((g) => {
+      //console.log(this.calculateAverageForAllParams(g));
+      this.data.push(this.calculateAverageForAllParams(g));
+    })
+
+    //console.log("voici data: ", this.data);
+    
+  }
+
+  calculateAverageForAllParams(dataList: Data[]): Data {
+    const paramsToExclude = ['id', 'date'];
+    const averages: Partial<Data> = {}; 
+  
+    averages.id = dataList[0].id;
+    averages.date = dataList[0].date;
+  
+    const params = Object.keys(dataList[0]).filter((key) => !paramsToExclude.includes(key));
+  
+    params.forEach((param) => {
+      const total = dataList.reduce((sum, data) => {
+        const value = data[param as keyof Data];
+        return typeof value === 'number' ? sum + value : sum;
+      }, 0);
+  
+      (averages as any)[param] = Math.round(total / dataList.length);
+    });
+  
+    return averages as Data;
+  }
+  
+  
+  
+  
+
+  private getInfo(num_station: number): void {
+    this.dataService.getInfo(num_station).subscribe({
+      next: (response: any) => {
+        this.data_details = response;
+        console.log('Données chargées de '+num_station+": ", this.data);
+        this.groupByDate(this.data_details);
+        console.log("Après groupByDate, data:", this.data);
+      },
+      error: (err) => {
+        console.error('Erreur:', err);
+      }
+    });
+  }
+
+
   private getLocations(): void {
     this.dataService.getLocalisations().subscribe({
       next: (response: City[]) => {
@@ -68,6 +142,8 @@ export class InterfacemeteoComponent implements OnInit {
       }
     });
   }
+
+ 
 
 
 
@@ -133,41 +209,57 @@ export class InterfacemeteoComponent implements OnInit {
   }
 
   generateWeatherData(city: City, startDate: Date) {
-    const conditions = [
-      { ville: 'Ensoleillé', icon: '☀️' },
-      { ville: 'Nuageux', icon: '☁️' },
-      { ville: 'Pluvieux', icon: '🌧️' },
-      { ville: 'Partiellement nuageux', icon: '⛅' }
-    ];
-
     this.weatherData = [];
-    
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(startDate);
-      date.setDate(date.getDate() + i);
-      
-      const seed = date.getTime();
-      const pseudoRandom = (n: number) => {
-        return ((Math.sin(seed * n) + 1) / 2);
-      };
+    this.getInfo(city.numeroStation)
+    setTimeout(() => {
+      console.log("Données dans data après un délai:", this.data);
 
-      const conditionIndex = Math.floor(pseudoRandom(1) * conditions.length);
-      const condition = conditions[conditionIndex];
-      const baseTemp = Math.floor(15 + pseudoRandom(2) * 10);
       
-      this.weatherData.push({
-        date: date,
-        temperature: baseTemp,
-        condition: condition.ville,
-        icon: condition.icon,
-        humidity: Math.floor(40 + pseudoRandom(3) * 50),
-        windSpeed: Math.floor(5 + pseudoRandom(4) * 25),
-        latitude: city.latitude,
-        longitude: city.longitude,
-        hourlyData: this.generateHourlyData(baseTemp, date)
-      });
+      this.data.forEach((d) => {
+        console.log("Info sur: "+city.ville +" n°"+d.numer_sta+" le: "+d.date+": ", d);
+        const condition = this.getWeatherCondition(d.t, d.rr12).split(" ");
+        const date = new Date(this.formatDateEN(d.date));
+        this.weatherData.push({
+          date: date,
+          temperature: d.t,
+          condition: condition[0],
+          icon: condition[1],
+          humidity: d.u,
+          windSpeed: d.ff,
+          latitude: city.latitude,
+          longitude: city.longitude,
+          hourlyData: this.generateHourlyData(d.t, date)
+        });
+
+      })
+    }, 100);
+  }
+
+
+  formatDateEN(dateString: string): string {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-GB', { 
+      weekday: 'long', 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    }).format(date);
+  }
+
+  getWeatherCondition(temperature: number, precipitation: number = 0): string {
+    if (precipitation > 0) {
+      return 'Pluvieux 🌧️';
+    } else if (temperature >= 25) {
+      return 'Ensoleillé ☀️';
+    } else if (temperature >= 15 && temperature < 25) {
+      return 'Partiellement nuageux ⛅';
+    } else if (temperature >= 5 && temperature < 15) {
+      return 'Nuageux ☁️';
+    } else {
+      return 'Froid ❄️';
     }
   }
+  
 
 
   onSearch() {

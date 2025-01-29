@@ -9,6 +9,7 @@ import { catchError } from 'rxjs/operators';
 export class DataService {
   private apiUrl_localisation = 'http://172.31.60.248:8080/api/localisations'
   private apiClimatTotal = "http://172.31.60.248:8080/api/donnees-climatiques/count"
+  private apiInfoCity =  "http://172.31.60.248:8080/api/donnees-climatiques/info/"
 
   constructor(private http: HttpClient) {}
  
@@ -18,5 +19,9 @@ export class DataService {
 
   getTotal(): Observable<any> {
     return this.http.get(this.apiClimatTotal);
+  }
+
+  getInfo(numStation: number): Observable<any> {
+    return this.http.get(this.apiInfoCity+numStation);
   }
 }
