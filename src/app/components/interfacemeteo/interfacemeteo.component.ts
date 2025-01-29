@@ -196,16 +196,16 @@ export class InterfacemeteoComponent implements OnInit {
     const daily_data= this.filterByDate(this.data_details, date);
     const hours:HourlyWeather[] = [];
 
-    daily_data.forEach((daily) => {
+    daily_data.reverse().forEach((daily) => {
       const condition = this.getWeatherCondition(daily.t, daily.rr12).split(" ");
-      const time  = daily.date.split(" ")[1].slice(0, 5);
+      const time = daily.date.split(" ")[1].slice(0, 5);
       hours.push({
         time: time,
         temperature: Math.round(daily.t),
         condition: condition[0],
         icon: condition[1]
       });
-    })
+    });    
     
     return hours;
   }
@@ -284,6 +284,16 @@ export class InterfacemeteoComponent implements OnInit {
 }
 
 
+/**
+ * Formats a date string into a human-readable format in English (UK).
+ * The formatted date includes the weekday, day, month, and year.
+ * 
+ * @param dateString - The date string to format, expected in a format 
+ *                     that can be parsed by the JavaScript Date object.
+ * @returns A string representing the formatted date in the format 
+ *          "weekday, day month year", e.g., "Monday, 1 January 2023".
+ */
+
   formatDateEN(dateString: string): string {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-GB', { 
@@ -294,6 +304,18 @@ export class InterfacemeteoComponent implements OnInit {
     }).format(date);
   }
 
+  /**
+   * Returns a string representing the weather condition, based on the given temperature and precipitation.
+   * The condition is determined as follows:
+   * - If precipitation is greater than 0, the condition is 'Pluvieux'.
+   * - If the temperature is above 25, the condition is 'Ensoleillé'.
+   * - If the temperature is between 15 and 25, the condition is 'Partiellement nuageux'.
+   * - If the temperature is between 5 and 15, the condition is 'Nuageux'.
+   * - If the temperature is below 5, the condition is 'Froid'.
+   * @param temperature The temperature in degrees Celsius.
+   * @param precipitation The amount of precipitation in mm/h.
+   * @returns A string representing the weather condition.
+   */
   getWeatherCondition(temperature: number, precipitation: number = 0): string {
     if (precipitation > 0) {
       return 'Pluvieux 🌧️';
@@ -308,6 +330,14 @@ export class InterfacemeteoComponent implements OnInit {
     }
   }
   
+  /**
+   * Renvoie une direction de vent sous forme de string, en fonction de son angle en degrés.
+   * Les directions sont renvoyées sous forme d'emojis, avec une direction cardinale.
+   * Les directions intermédiaires sont renvoyées avec un mélange de deux directions cardinales.
+   * Si la direction n'est pas comprise entre 0 et 360 degrés, la méthode renvoie "Inconnue".
+   * @param degree L'angle de la direction du vent, en degrés.
+   * @returns La direction du vent, sous forme de string.
+   */
   getWindDirection(degree: number): string {
     if (degree >= 337.5 || degree < 22.5) {
       return '⬆️ Nord';
@@ -332,6 +362,13 @@ export class InterfacemeteoComponent implements OnInit {
   
 
 
+  /**
+   * Called when the user searches for a city.
+   * If the search input is not empty and a date is selected,
+   * it will search for a city with the given name and
+   * generate the weather data for the selected date if found.
+   * If no city is found, it will clear the weather data array.
+   */
   onSearch() {
     if (this.searchCity && this.selectedDate) {
       const city = this.cities.find(c => 
@@ -346,6 +383,13 @@ export class InterfacemeteoComponent implements OnInit {
     }
   }
 
+
+
+  /**
+   * Méthode appelée lorsque la date sélectionnée change.
+   * Rechercher une ville correspondant au nom de la ville actuelle
+   * et génère les données météo pour la date sélectionnée.
+   */
   onDateChange() {
     if (this.searchCity && this.selectedDate) {
       const city = this.cities.find(c => 
