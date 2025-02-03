@@ -21,7 +21,28 @@ export class DataService {
     return this.http.get(this.apiClimatTotal);
   }
 
-  getInfo(numStation: number): Observable<any> {
-    return this.http.get(this.apiInfoCity+numStation);
+  getInfo(numStation: number, date: string): Observable<any> {
+    console.log("Date reçue:", date);
+
+    let dateFin = new Date(date);
+    console.log("vetitable date de fin:", dateFin);
+    dateFin.setDate(dateFin.getDate()+1)
+    let dateFinFormatted = dateFin.toISOString().split('T')[0];
+  
+    let dateF = new Date(dateFin);
+  
+    let dateDebut = new Date(dateF);
+    dateDebut.setDate(dateDebut.getDate() - 7);
+    let dateDebutFormatted = dateDebut.toISOString().split('T')[0];
+  
+    console.log("Date de début:", dateDebutFormatted, "| Date de fin:",dateFin);
+
+    let url = this.apiInfoCity + numStation + "?dateDebut=" + dateFin + "&dateFin=" + dateDebutFormatted;
+
+    console.log("URL appélé: ", url);
+  
+    return this.http.get(this.apiInfoCity+numStation+"?dateDebut="+dateDebutFormatted+"&dateFin="+dateFinFormatted);
   }
+  
+  
 }

@@ -123,8 +123,8 @@ export class InterfacemeteoComponent implements OnInit {
   
   
 
-  private getInfo(num_station: number): void {
-    this.dataService.getInfo(num_station).subscribe({
+  private getInfo(num_station: number, dateFin: string): void {
+    this.dataService.getInfo(num_station, dateFin).subscribe({
       next: (response: any) => {
         this.data_details = response;
         console.log('Données chargées de '+num_station+": ", this.data);
@@ -147,7 +147,7 @@ export class InterfacemeteoComponent implements OnInit {
         const c = this.cities.find(c => c.ville.includes('DIJON')) || this.cities[0];
         if ( c ) {
           this.searchCity =  c .ville;
-          this.generateWeatherData( c , new Date());
+          this.generateWeatherData( c , new Date(this.selectedDate));
         }
       },
       error: (err) => {
@@ -225,8 +225,8 @@ export class InterfacemeteoComponent implements OnInit {
 
     this.infoCity = city;
 
-
-    this.getInfo(city.numeroStation)
+    console.log("Date qu'on pour la requete: ", startDate);
+    this.getInfo(city.numeroStation, startDate.toISOString().split('T')[0]);
     setTimeout(() => {
       console.log("Données dans data après un délai:", this.data);
 
@@ -322,7 +322,7 @@ export class InterfacemeteoComponent implements OnInit {
     } else if (temperature >= 25) {
       return 'Ensoleillé ☀️';
     } else if (temperature >= 15 && temperature < 25) {
-      return 'Partiellement nuageux ⛅';
+      return 'Partiellement-nuageux ⛅';
     } else if (temperature >= 5 && temperature < 15) {
       return 'Nuageux ☁️';
     } else {
