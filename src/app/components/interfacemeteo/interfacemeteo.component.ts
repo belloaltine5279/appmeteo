@@ -231,7 +231,7 @@ export class InterfacemeteoComponent implements OnInit {
       console.log("Données dans data après un délai:", this.data);
 
       
-      this.data.forEach((d) => {
+      this.data.reverse().forEach((d) => {
         console.log("Info sur: "+city.ville +" n°"+d.numer_sta+" le: "+d.date+": ", d);
         const condition = this.getWeatherCondition(d.t, d.rr12).split(" ");
         const date = new Date(this.formatDateEN(d.date));
@@ -280,7 +280,7 @@ export class InterfacemeteoComponent implements OnInit {
     if (score >= 60) return "Acceptable alert-info";
     if (score >= 40) return "Médiocre alert-warning";
     if (score >= 20) return "Mauvaise alert-danger";
-    return "Très mauvaise alert-secondary";
+    return "Très-mauvaise alert-secondary";
 }
 
 
