@@ -244,7 +244,7 @@ export class InterfacemeteoComponent implements OnInit {
           prose: d.td,
           windQuality: this.windQuality(d.u, d.ff, d.t, d.rr12),
           visibility: Math.round(d.vv/1000),
-          windSpeed: d.ff,
+          windSpeed: Math.round(d.ff*3.6),
           realFeel: Math.round(this.calculateFeelsLike(d.t, d.ff, d.u, d.td)),
           windDirection: this.getWindDirection(d.dd).split(" ")[0],
           precipitation: d.rr12,
