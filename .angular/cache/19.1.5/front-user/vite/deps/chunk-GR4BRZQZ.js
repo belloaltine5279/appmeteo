@@ -3,7 +3,7 @@ import {
   XhrFactory,
   isPlatformServer,
   parseCookieValue
-} from "./chunk-HJSLYVXA.js";
+} from "./chunk-H7CEYIRM.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   ApplicationRef,
@@ -42,7 +42,7 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-Z3GLR2YK.js";
+} from "./chunk-N243NQOM.js";
 
 // node_modules/@angular/common/fesm2022/http.mjs
 var HttpHandler = class {
@@ -364,9 +364,9 @@ var HttpParams = class _HttpParams {
   cloneFrom = null;
   constructor(options = {}) {
     this.encoder = options.encoder || new HttpUrlEncodingCodec();
-    if (!!options.fromString) {
-      if (!!options.fromObject) {
-        throw new Error(`Cannot specify both fromString and fromObject.`);
+    if (options.fromString) {
+      if (options.fromObject) {
+        throw new RuntimeError(2805, ngDevMode && "Cannot specify both fromString and fromObject.");
       }
       this.map = paramParser(options.fromString, this.encoder);
     } else if (!!options.fromObject) {
@@ -627,6 +627,12 @@ function isFormData(value) {
 function isUrlSearchParams(value) {
   return typeof URLSearchParams !== "undefined" && value instanceof URLSearchParams;
 }
+var CONTENT_TYPE_HEADER = "Content-Type";
+var ACCEPT_HEADER = "Accept";
+var X_REQUEST_URL_HEADER = "X-Request-URL";
+var TEXT_CONTENT_TYPE = "text/plain";
+var JSON_CONTENT_TYPE = "application/json";
+var ACCEPT_HEADER_VALUE = `${JSON_CONTENT_TYPE}, ${TEXT_CONTENT_TYPE}, */*`;
 var HttpRequest = class _HttpRequest {
   url;
   /**
@@ -676,7 +682,7 @@ var HttpRequest = class _HttpRequest {
    * To pass a string representation of HTTP parameters in the URL-query-string format,
    * the `HttpParamsOptions`' `fromString` may be used. For example:
    *
-   * ```
+   * ```ts
    * new HttpParams({fromString: 'angular=awesome'})
    * ```
    */
@@ -772,13 +778,13 @@ var HttpRequest = class _HttpRequest {
       return null;
     }
     if (typeof this.body === "string") {
-      return "text/plain";
+      return TEXT_CONTENT_TYPE;
     }
     if (this.body instanceof HttpParams) {
       return "application/x-www-form-urlencoded;charset=UTF-8";
     }
     if (typeof this.body === "object" || typeof this.body === "number" || typeof this.body === "boolean") {
-      return "application/json";
+      return JSON_CONTENT_TYPE;
     }
     return null;
   }
@@ -1078,21 +1084,21 @@ var HttpClient = class _HttpClient {
           case "arraybuffer":
             return res$.pipe(map((res) => {
               if (res.body !== null && !(res.body instanceof ArrayBuffer)) {
-                throw new Error("Response is not an ArrayBuffer.");
+                throw new RuntimeError(2806, ngDevMode && "Response is not an ArrayBuffer.");
               }
               return res.body;
             }));
           case "blob":
             return res$.pipe(map((res) => {
               if (res.body !== null && !(res.body instanceof Blob)) {
-                throw new Error("Response is not a Blob.");
+                throw new RuntimeError(2807, ngDevMode && "Response is not a Blob.");
               }
               return res.body;
             }));
           case "text":
             return res$.pipe(map((res) => {
               if (res.body !== null && typeof res.body !== "string") {
-                throw new Error("Response is not a string.");
+                throw new RuntimeError(2808, ngDevMode && "Response is not a string.");
               }
               return res.body;
             }));
@@ -1103,7 +1109,7 @@ var HttpClient = class _HttpClient {
       case "response":
         return res$;
       default:
-        throw new Error(`Unreachable: unhandled observe type ${options.observe}}`);
+        throw new RuntimeError(2809, ngDevMode && `Unreachable: unhandled observe type ${options.observe}}`);
     }
   }
   /**
@@ -1213,14 +1219,14 @@ var HttpClient = class _HttpClient {
   }], null);
 })();
 var XSSI_PREFIX$1 = /^\)\]\}',?\n/;
-var REQUEST_URL_HEADER = `X-Request-URL`;
 function getResponseUrl$1(response) {
   if (response.url) {
     return response.url;
   }
-  const xRequestUrl = REQUEST_URL_HEADER.toLocaleLowerCase();
+  const xRequestUrl = X_REQUEST_URL_HEADER.toLocaleLowerCase();
   return response.headers.get(xRequestUrl);
 }
+var FETCH_BACKEND = new InjectionToken(typeof ngDevMode === "undefined" || ngDevMode ? "FETCH_BACKEND" : "");
 var FetchBackend = class _FetchBackend {
   // We use an arrow function to always reference the current global implementation of `fetch`.
   // This is helpful for cases when the global `fetch` implementation is modified by external code,
@@ -1309,7 +1315,7 @@ var FetchBackend = class _FetchBackend {
         }));
         const chunksAll = this.concatChunks(chunks, receivedLength);
         try {
-          const contentType = response.headers.get("Content-Type") ?? "";
+          const contentType = response.headers.get(CONTENT_TYPE_HEADER) ?? "";
           body = this.parseBody(request, chunksAll, contentType);
         } catch (error) {
           observer.error(new HttpErrorResponse({
@@ -1365,13 +1371,13 @@ var FetchBackend = class _FetchBackend {
     const headers = {};
     const credentials = req.withCredentials ? "include" : void 0;
     req.headers.forEach((name, values) => headers[name] = values.join(","));
-    if (!req.headers.has("Accept")) {
-      headers["Accept"] = "application/json, text/plain, */*";
+    if (!req.headers.has(ACCEPT_HEADER)) {
+      headers[ACCEPT_HEADER] = ACCEPT_HEADER_VALUE;
     }
-    if (!req.headers.has("Content-Type")) {
+    if (!req.headers.has(CONTENT_TYPE_HEADER)) {
       const detectedType = req.detectContentTypeHeader();
       if (detectedType !== null) {
-        headers["Content-Type"] = detectedType;
+        headers[CONTENT_TYPE_HEADER] = detectedType;
       }
     }
     return {
@@ -1666,12 +1672,13 @@ var JsonpInterceptor = class _JsonpInterceptor {
   }], null);
 })();
 var XSSI_PREFIX = /^\)\]\}',?\n/;
+var X_REQUEST_URL_REGEXP = RegExp(`^${X_REQUEST_URL_HEADER}:`, "m");
 function getResponseUrl(xhr) {
   if ("responseURL" in xhr && xhr.responseURL) {
     return xhr.responseURL;
   }
-  if (/^X-Request-URL:/m.test(xhr.getAllResponseHeaders())) {
-    return xhr.getResponseHeader("X-Request-URL");
+  if (X_REQUEST_URL_REGEXP.test(xhr.getAllResponseHeaders())) {
+    return xhr.getResponseHeader(X_REQUEST_URL_HEADER);
   }
   return null;
 }
@@ -1699,13 +1706,13 @@ var HttpXhrBackend = class _HttpXhrBackend {
           xhr.withCredentials = true;
         }
         req.headers.forEach((name, values) => xhr.setRequestHeader(name, values.join(",")));
-        if (!req.headers.has("Accept")) {
-          xhr.setRequestHeader("Accept", "application/json, text/plain, */*");
+        if (!req.headers.has(ACCEPT_HEADER)) {
+          xhr.setRequestHeader(ACCEPT_HEADER, ACCEPT_HEADER_VALUE);
         }
-        if (!req.headers.has("Content-Type")) {
+        if (!req.headers.has(CONTENT_TYPE_HEADER)) {
           const detectedType = req.detectContentTypeHeader();
           if (detectedType !== null) {
-            xhr.setRequestHeader("Content-Type", detectedType);
+            xhr.setRequestHeader(CONTENT_TYPE_HEADER, detectedType);
           }
         }
         if (req.responseType) {
@@ -2004,7 +2011,7 @@ function provideHttpClient(...features) {
   }, {
     provide: HttpBackend,
     useFactory: () => {
-      return inject(FetchBackend, {
+      return inject(FETCH_BACKEND, {
         optional: true
       }) ?? inject(HttpXhrBackend);
     }
@@ -2096,6 +2103,9 @@ function withRequestsMadeViaParent() {
 }
 function withFetch() {
   return makeHttpFeature(HttpFeatureKind.Fetch, [FetchBackend, {
+    provide: FETCH_BACKEND,
+    useExisting: FetchBackend
+  }, {
     provide: HttpBackend,
     useExisting: FetchBackend
   }]);
@@ -2238,11 +2248,10 @@ function transferCacheInterceptorFn(req, next) {
   const originMap = inject(HTTP_TRANSFER_CACHE_ORIGIN_MAP, {
     optional: true
   });
-  const isServer = isPlatformServer(inject(PLATFORM_ID));
-  if (originMap && !isServer) {
+  if (originMap) {
     throw new RuntimeError(2803, ngDevMode && "Angular detected that the `HTTP_TRANSFER_CACHE_ORIGIN_MAP` token is configured and present in the client side code. Please ensure that this token is only provided in the server code of the application.");
   }
-  const requestUrl = isServer && originMap ? mapRequestOriginUrl(req.url, originMap) : req.url;
+  const requestUrl = false ? mapRequestOriginUrl(req.url, originMap) : req.url;
   const storeKey = makeCacheKey(req, requestUrl);
   const response = transferState.get(storeKey, null);
   let headersToInclude = globalOptions.includeHeaders;
@@ -2280,7 +2289,7 @@ function transferCacheInterceptorFn(req, next) {
     }));
   }
   return next(req).pipe(tap((event) => {
-    if (event instanceof HttpResponse && isServer) {
+    if (event instanceof HttpResponse && true && false) {
       transferState.set(storeKey, {
         [BODY]: event.body,
         [HEADERS]: getFilteredHeaders(event.headers, headersToInclude),
@@ -2294,19 +2303,6 @@ function transferCacheInterceptorFn(req, next) {
 }
 function hasAuthHeaders(req) {
   return req.headers.has("authorization") || req.headers.has("proxy-authorization");
-}
-function getFilteredHeaders(headers, includeHeaders) {
-  if (!includeHeaders) {
-    return {};
-  }
-  const headersMap = {};
-  for (const key of includeHeaders) {
-    const values = headers.getAll(key);
-    if (values !== null) {
-      headersMap[key] = values;
-    }
-  }
-  return headersMap;
 }
 function sortAndConcatParams(params) {
   return [...params.keys()].sort().map((k) => `${k}=${params.getAll(k)}`).join("&");
@@ -2385,22 +2381,6 @@ function appendMissingHeadersDetection(url, headers, headersToInclude) {
     }
   });
 }
-function mapRequestOriginUrl(url, originMap) {
-  const origin = new URL(url, "resolve://").origin;
-  const mappedOrigin = originMap[origin];
-  if (!mappedOrigin) {
-    return url;
-  }
-  if (typeof ngDevMode === "undefined" || ngDevMode) {
-    verifyMappedOrigin(mappedOrigin);
-  }
-  return url.replace(origin, mappedOrigin);
-}
-function verifyMappedOrigin(url) {
-  if (new URL(url, "resolve://").pathname !== "/") {
-    throw new RuntimeError(2804, `Angular detected a URL with a path segment in the value provided for the \`HTTP_TRANSFER_CACHE_ORIGIN_MAP\` token: ${url}. The map should only contain origins without any other segments.`);
-  }
-}
 
 export {
   HttpHandler,
@@ -2446,9 +2426,9 @@ export {
 
 @angular/common/fesm2022/http.mjs:
   (**
-   * @license Angular v19.0.5
+   * @license Angular v19.1.4
    * (c) 2010-2024 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-Z7LUGPOX.js.map
+//# sourceMappingURL=chunk-GR4BRZQZ.js.map

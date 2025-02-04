@@ -73,7 +73,6 @@ import {
   KeyValueDiffers,
   LContext,
   LOCALE_ID,
-  LifecycleHooksFeature,
   LocaleDataIndex,
   MicrotaskEffectScheduler,
   MissingTranslationStrategy,
@@ -203,7 +202,7 @@ import {
   getAsyncClassMetadataFn,
   getClosestComponentName,
   getDebugNode,
-  getDeferBlocks,
+  getDeferBlocks$1,
   getDirectives,
   getHostElement,
   getInjectableDef,
@@ -303,6 +302,7 @@ import {
   ɵɵNgOnChangesFeature,
   ɵɵProvidersFeature,
   ɵɵadvance,
+  ɵɵattachSourceLocations,
   ɵɵattribute,
   ɵɵattributeInterpolate1,
   ɵɵattributeInterpolate2,
@@ -493,7 +493,7 @@ import {
   ɵɵvalidateIframeAttribute,
   ɵɵviewQuery,
   ɵɵviewQuerySignal
-} from "./chunk-Z3GLR2YK.js";
+} from "./chunk-N243NQOM.js";
 export {
   ANIMATION_MODULE_TYPE,
   APP_BOOTSTRAP_LISTENER,
@@ -668,7 +668,6 @@ export {
   IS_INCREMENTAL_HYDRATION_ENABLED as ɵIS_INCREMENTAL_HYDRATION_ENABLED,
   JSACTION_EVENT_CONTRACT as ɵJSACTION_EVENT_CONTRACT,
   LContext as ɵLContext,
-  LifecycleHooksFeature as ɵLifecycleHooksFeature,
   LocaleDataIndex as ɵLocaleDataIndex,
   MicrotaskEffectScheduler as ɵMicrotaskEffectScheduler,
   NG_COMP_DEF as ɵNG_COMP_DEF,
@@ -732,7 +731,7 @@ export {
   getAsyncClassMetadataFn as ɵgetAsyncClassMetadataFn,
   getClosestComponentName as ɵgetClosestComponentName,
   getDebugNode as ɵgetDebugNode,
-  getDeferBlocks as ɵgetDeferBlocks,
+  getDeferBlocks$1 as ɵgetDeferBlocks,
   getDirectives as ɵgetDirectives,
   getHostElement as ɵgetHostElement,
   getInjectableDef as ɵgetInjectableDef,
@@ -800,6 +799,7 @@ export {
   ɵɵNgOnChangesFeature,
   ɵɵProvidersFeature,
   ɵɵadvance,
+  ɵɵattachSourceLocations,
   ɵɵattribute,
   ɵɵattributeInterpolate1,
   ɵɵattributeInterpolate2,
@@ -992,4 +992,3 @@ export {
   ɵɵviewQuery,
   ɵɵviewQuerySignal
 };
-//# sourceMappingURL=@angular_core.js.map

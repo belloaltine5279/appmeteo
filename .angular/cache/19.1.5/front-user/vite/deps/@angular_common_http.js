@@ -37,9 +37,9 @@ import {
   withNoXsrfProtection,
   withRequestsMadeViaParent,
   withXsrfConfiguration
-} from "./chunk-Z7LUGPOX.js";
-import "./chunk-HJSLYVXA.js";
-import "./chunk-Z3GLR2YK.js";
+} from "./chunk-GR4BRZQZ.js";
+import "./chunk-H7CEYIRM.js";
+import "./chunk-N243NQOM.js";
 export {
   FetchBackend,
   HTTP_INTERCEPTORS,
@@ -81,4 +81,3 @@ export {
   REQUESTS_CONTRIBUTE_TO_STABILITY as ɵREQUESTS_CONTRIBUTE_TO_STABILITY,
   withHttpTransferCache as ɵwithHttpTransferCache
 };
-//# sourceMappingURL=@angular_common_http.js.map

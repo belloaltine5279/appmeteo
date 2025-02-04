@@ -258,7 +258,7 @@ export class InterfacemeteoComponent implements OnInit {
       })
 
       
-    }, 100);
+    }, 300);
   }
 
   windQuality(humidity: number, windSpeed: number, temperature: number, precipitation: number = 0): string {

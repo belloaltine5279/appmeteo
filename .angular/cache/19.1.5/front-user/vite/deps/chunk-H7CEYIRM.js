@@ -3,6 +3,7 @@ import {
   Attribute,
   ChangeDetectorRef,
   DEFAULT_CURRENCY_CODE,
+  DestroyRef,
   Directive,
   ElementRef,
   Host,
@@ -60,7 +61,7 @@ import {
   ɵɵinject,
   ɵɵinjectAttribute,
   ɵɵstyleProp
-} from "./chunk-Z3GLR2YK.js";
+} from "./chunk-N243NQOM.js";
 
 // node_modules/@angular/common/fesm2022/common.mjs
 var _DOM = null;
@@ -198,26 +199,12 @@ var BrowserPlatformLocation = class _BrowserPlatformLocation extends PlatformLoc
   }], () => [], null);
 })();
 function joinWithSlash(start, end) {
-  if (start.length == 0) {
-    return end;
-  }
-  if (end.length == 0) {
-    return start;
-  }
-  let slashes = 0;
+  if (!start) return end;
+  if (!end) return start;
   if (start.endsWith("/")) {
-    slashes++;
+    return end.startsWith("/") ? start + end.slice(1) : start + end;
   }
-  if (end.startsWith("/")) {
-    slashes++;
-  }
-  if (slashes == 2) {
-    return start + end.substring(1);
-  }
-  if (slashes == 1) {
-    return start + end;
-  }
-  return start + "/" + end;
+  return end.startsWith("/") ? start + end : `${start}/${end}`;
 }
 function stripTrailingSlash(url) {
   const match = url.match(/#|\?|$/);
@@ -1084,31 +1071,6 @@ function getNumberOfCurrencyDigits(code) {
 var ISO8601_DATE_REGEX = /^(\d{4,})-?(\d\d)-?(\d\d)(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:\.(\d+))?)?)?(Z|([+-])(\d\d):?(\d\d))?)?$/;
 var NAMED_FORMATS = {};
 var DATE_FORMATS_SPLIT = /((?:[^BEGHLMOSWYZabcdhmswyz']+)|(?:'(?:[^']|'')*')|(?:G{1,5}|y{1,4}|Y{1,4}|M{1,5}|L{1,5}|w{1,2}|W{1}|d{1,2}|E{1,6}|c{1,6}|a{1,5}|b{1,5}|B{1,5}|h{1,2}|H{1,2}|m{1,2}|s{1,2}|S{1,3}|z{1,4}|Z{1,5}|O{1,4}))([\s\S]*)/;
-var ZoneWidth;
-(function(ZoneWidth2) {
-  ZoneWidth2[ZoneWidth2["Short"] = 0] = "Short";
-  ZoneWidth2[ZoneWidth2["ShortGMT"] = 1] = "ShortGMT";
-  ZoneWidth2[ZoneWidth2["Long"] = 2] = "Long";
-  ZoneWidth2[ZoneWidth2["Extended"] = 3] = "Extended";
-})(ZoneWidth || (ZoneWidth = {}));
-var DateType;
-(function(DateType2) {
-  DateType2[DateType2["FullYear"] = 0] = "FullYear";
-  DateType2[DateType2["Month"] = 1] = "Month";
-  DateType2[DateType2["Date"] = 2] = "Date";
-  DateType2[DateType2["Hours"] = 3] = "Hours";
-  DateType2[DateType2["Minutes"] = 4] = "Minutes";
-  DateType2[DateType2["Seconds"] = 5] = "Seconds";
-  DateType2[DateType2["FractionalSeconds"] = 6] = "FractionalSeconds";
-  DateType2[DateType2["Day"] = 7] = "Day";
-})(DateType || (DateType = {}));
-var TranslationType;
-(function(TranslationType2) {
-  TranslationType2[TranslationType2["DayPeriods"] = 0] = "DayPeriods";
-  TranslationType2[TranslationType2["Days"] = 1] = "Days";
-  TranslationType2[TranslationType2["Months"] = 2] = "Months";
-  TranslationType2[TranslationType2["Eras"] = 3] = "Eras";
-})(TranslationType || (TranslationType = {}));
 function formatDate(value, format, locale, timezone) {
   let date = toDate(value);
   const namedFormat = getNamedFormat(locale, format);
@@ -1242,11 +1204,11 @@ function dateGetter(name, size, offset = 0, trim = false, negWrap = false) {
     if (offset > 0 || part > -offset) {
       part += offset;
     }
-    if (name === DateType.Hours) {
+    if (name === 3) {
       if (part === 0 && offset === -12) {
         part = 12;
       }
-    } else if (name === DateType.FractionalSeconds) {
+    } else if (name === 6) {
       return formatFractionalSeconds(part, size);
     }
     const localeMinus = getLocaleNumberSymbol(locale, NumberSymbol.MinusSign);
@@ -1255,21 +1217,21 @@ function dateGetter(name, size, offset = 0, trim = false, negWrap = false) {
 }
 function getDatePart(part, date) {
   switch (part) {
-    case DateType.FullYear:
+    case 0:
       return date.getFullYear();
-    case DateType.Month:
+    case 1:
       return date.getMonth();
-    case DateType.Date:
+    case 2:
       return date.getDate();
-    case DateType.Hours:
+    case 3:
       return date.getHours();
-    case DateType.Minutes:
+    case 4:
       return date.getMinutes();
-    case DateType.Seconds:
+    case 5:
       return date.getSeconds();
-    case DateType.FractionalSeconds:
+    case 6:
       return date.getMilliseconds();
-    case DateType.Day:
+    case 7:
       return date.getDay();
     default:
       throw new Error(`Unknown DateType value "${part}".`);
@@ -1282,11 +1244,11 @@ function dateStrGetter(name, width, form = FormStyle.Format, extended = false) {
 }
 function getDateTranslation(date, locale, name, width, form, extended) {
   switch (name) {
-    case TranslationType.Months:
+    case 2:
       return getLocaleMonthNames(locale, form, width)[date.getMonth()];
-    case TranslationType.Days:
+    case 1:
       return getLocaleDayNames(locale, form, width)[date.getDay()];
-    case TranslationType.DayPeriods:
+    case 0:
       const currentHours = date.getHours();
       const currentMinutes = date.getMinutes();
       if (extended) {
@@ -1316,7 +1278,7 @@ function getDateTranslation(date, locale, name, width, form, extended) {
         }
       }
       return getLocaleDayPeriods(locale, form, width)[currentHours < 12 ? 0 : 1];
-    case TranslationType.Eras:
+    case 3:
       return getLocaleEraNames(locale, width)[date.getFullYear() <= 0 ? 0 : 1];
     default:
       const unexpected = name;
@@ -1329,13 +1291,13 @@ function timeZoneGetter(width) {
     const minusSign = getLocaleNumberSymbol(locale, NumberSymbol.MinusSign);
     const hours = zone > 0 ? Math.floor(zone / 60) : Math.ceil(zone / 60);
     switch (width) {
-      case ZoneWidth.Short:
+      case 0:
         return (zone >= 0 ? "+" : "") + padNumber(hours, 2, minusSign) + padNumber(Math.abs(zone % 60), 2, minusSign);
-      case ZoneWidth.ShortGMT:
+      case 1:
         return "GMT" + (zone >= 0 ? "+" : "") + padNumber(hours, 1, minusSign);
-      case ZoneWidth.Long:
+      case 2:
         return "GMT" + (zone >= 0 ? "+" : "") + padNumber(hours, 2, minusSign) + ":" + padNumber(Math.abs(zone % 60), 2, minusSign);
-      case ZoneWidth.Extended:
+      case 3:
         if (offset === 0) {
           return "Z";
         } else {
@@ -1387,198 +1349,244 @@ function getDateFormatter(format) {
   }
   let formatter;
   switch (format) {
+    // Era name (AD/BC)
     case "G":
     case "GG":
     case "GGG":
-      formatter = dateStrGetter(TranslationType.Eras, TranslationWidth.Abbreviated);
+      formatter = dateStrGetter(3, TranslationWidth.Abbreviated);
       break;
     case "GGGG":
-      formatter = dateStrGetter(TranslationType.Eras, TranslationWidth.Wide);
+      formatter = dateStrGetter(3, TranslationWidth.Wide);
       break;
     case "GGGGG":
-      formatter = dateStrGetter(TranslationType.Eras, TranslationWidth.Narrow);
+      formatter = dateStrGetter(3, TranslationWidth.Narrow);
       break;
+    // 1 digit representation of the year, e.g. (AD 1 => 1, AD 199 => 199)
     case "y":
-      formatter = dateGetter(DateType.FullYear, 1, 0, false, true);
+      formatter = dateGetter(0, 1, 0, false, true);
       break;
+    // 2 digit representation of the year, padded (00-99). (e.g. AD 2001 => 01, AD 2010 => 10)
     case "yy":
-      formatter = dateGetter(DateType.FullYear, 2, 0, true, true);
+      formatter = dateGetter(0, 2, 0, true, true);
       break;
+    // 3 digit representation of the year, padded (000-999). (e.g. AD 2001 => 01, AD 2010 => 10)
     case "yyy":
-      formatter = dateGetter(DateType.FullYear, 3, 0, false, true);
+      formatter = dateGetter(0, 3, 0, false, true);
       break;
+    // 4 digit representation of the year (e.g. AD 1 => 0001, AD 2010 => 2010)
     case "yyyy":
-      formatter = dateGetter(DateType.FullYear, 4, 0, false, true);
+      formatter = dateGetter(0, 4, 0, false, true);
       break;
+    // 1 digit representation of the week-numbering year, e.g. (AD 1 => 1, AD 199 => 199)
     case "Y":
       formatter = weekNumberingYearGetter(1);
       break;
+    // 2 digit representation of the week-numbering year, padded (00-99). (e.g. AD 2001 => 01, AD
+    // 2010 => 10)
     case "YY":
       formatter = weekNumberingYearGetter(2, true);
       break;
+    // 3 digit representation of the week-numbering year, padded (000-999). (e.g. AD 1 => 001, AD
+    // 2010 => 2010)
     case "YYY":
       formatter = weekNumberingYearGetter(3);
       break;
+    // 4 digit representation of the week-numbering year (e.g. AD 1 => 0001, AD 2010 => 2010)
     case "YYYY":
       formatter = weekNumberingYearGetter(4);
       break;
+    // Month of the year (1-12), numeric
     case "M":
     case "L":
-      formatter = dateGetter(DateType.Month, 1, 1);
+      formatter = dateGetter(1, 1, 1);
       break;
     case "MM":
     case "LL":
-      formatter = dateGetter(DateType.Month, 2, 1);
+      formatter = dateGetter(1, 2, 1);
       break;
+    // Month of the year (January, ...), string, format
     case "MMM":
-      formatter = dateStrGetter(TranslationType.Months, TranslationWidth.Abbreviated);
+      formatter = dateStrGetter(2, TranslationWidth.Abbreviated);
       break;
     case "MMMM":
-      formatter = dateStrGetter(TranslationType.Months, TranslationWidth.Wide);
+      formatter = dateStrGetter(2, TranslationWidth.Wide);
       break;
     case "MMMMM":
-      formatter = dateStrGetter(TranslationType.Months, TranslationWidth.Narrow);
+      formatter = dateStrGetter(2, TranslationWidth.Narrow);
       break;
+    // Month of the year (January, ...), string, standalone
     case "LLL":
-      formatter = dateStrGetter(TranslationType.Months, TranslationWidth.Abbreviated, FormStyle.Standalone);
+      formatter = dateStrGetter(2, TranslationWidth.Abbreviated, FormStyle.Standalone);
       break;
     case "LLLL":
-      formatter = dateStrGetter(TranslationType.Months, TranslationWidth.Wide, FormStyle.Standalone);
+      formatter = dateStrGetter(2, TranslationWidth.Wide, FormStyle.Standalone);
       break;
     case "LLLLL":
-      formatter = dateStrGetter(TranslationType.Months, TranslationWidth.Narrow, FormStyle.Standalone);
+      formatter = dateStrGetter(2, TranslationWidth.Narrow, FormStyle.Standalone);
       break;
+    // Week of the year (1, ... 52)
     case "w":
       formatter = weekGetter(1);
       break;
     case "ww":
       formatter = weekGetter(2);
       break;
+    // Week of the month (1, ...)
     case "W":
       formatter = weekGetter(1, true);
       break;
+    // Day of the month (1-31)
     case "d":
-      formatter = dateGetter(DateType.Date, 1);
+      formatter = dateGetter(2, 1);
       break;
     case "dd":
-      formatter = dateGetter(DateType.Date, 2);
+      formatter = dateGetter(2, 2);
       break;
+    // Day of the Week StandAlone (1, 1, Mon, Monday, M, Mo)
     case "c":
     case "cc":
-      formatter = dateGetter(DateType.Day, 1);
+      formatter = dateGetter(7, 1);
       break;
     case "ccc":
-      formatter = dateStrGetter(TranslationType.Days, TranslationWidth.Abbreviated, FormStyle.Standalone);
+      formatter = dateStrGetter(1, TranslationWidth.Abbreviated, FormStyle.Standalone);
       break;
     case "cccc":
-      formatter = dateStrGetter(TranslationType.Days, TranslationWidth.Wide, FormStyle.Standalone);
+      formatter = dateStrGetter(1, TranslationWidth.Wide, FormStyle.Standalone);
       break;
     case "ccccc":
-      formatter = dateStrGetter(TranslationType.Days, TranslationWidth.Narrow, FormStyle.Standalone);
+      formatter = dateStrGetter(1, TranslationWidth.Narrow, FormStyle.Standalone);
       break;
     case "cccccc":
-      formatter = dateStrGetter(TranslationType.Days, TranslationWidth.Short, FormStyle.Standalone);
+      formatter = dateStrGetter(1, TranslationWidth.Short, FormStyle.Standalone);
       break;
+    // Day of the Week
     case "E":
     case "EE":
     case "EEE":
-      formatter = dateStrGetter(TranslationType.Days, TranslationWidth.Abbreviated);
+      formatter = dateStrGetter(1, TranslationWidth.Abbreviated);
       break;
     case "EEEE":
-      formatter = dateStrGetter(TranslationType.Days, TranslationWidth.Wide);
+      formatter = dateStrGetter(1, TranslationWidth.Wide);
       break;
     case "EEEEE":
-      formatter = dateStrGetter(TranslationType.Days, TranslationWidth.Narrow);
+      formatter = dateStrGetter(1, TranslationWidth.Narrow);
       break;
     case "EEEEEE":
-      formatter = dateStrGetter(TranslationType.Days, TranslationWidth.Short);
+      formatter = dateStrGetter(1, TranslationWidth.Short);
       break;
+    // Generic period of the day (am-pm)
     case "a":
     case "aa":
     case "aaa":
-      formatter = dateStrGetter(TranslationType.DayPeriods, TranslationWidth.Abbreviated);
+      formatter = dateStrGetter(0, TranslationWidth.Abbreviated);
       break;
     case "aaaa":
-      formatter = dateStrGetter(TranslationType.DayPeriods, TranslationWidth.Wide);
+      formatter = dateStrGetter(0, TranslationWidth.Wide);
       break;
     case "aaaaa":
-      formatter = dateStrGetter(TranslationType.DayPeriods, TranslationWidth.Narrow);
+      formatter = dateStrGetter(0, TranslationWidth.Narrow);
       break;
+    // Extended period of the day (midnight, at night, ...), standalone
     case "b":
     case "bb":
     case "bbb":
-      formatter = dateStrGetter(TranslationType.DayPeriods, TranslationWidth.Abbreviated, FormStyle.Standalone, true);
+      formatter = dateStrGetter(0, TranslationWidth.Abbreviated, FormStyle.Standalone, true);
       break;
     case "bbbb":
-      formatter = dateStrGetter(TranslationType.DayPeriods, TranslationWidth.Wide, FormStyle.Standalone, true);
+      formatter = dateStrGetter(0, TranslationWidth.Wide, FormStyle.Standalone, true);
       break;
     case "bbbbb":
-      formatter = dateStrGetter(TranslationType.DayPeriods, TranslationWidth.Narrow, FormStyle.Standalone, true);
+      formatter = dateStrGetter(0, TranslationWidth.Narrow, FormStyle.Standalone, true);
       break;
+    // Extended period of the day (midnight, night, ...), standalone
     case "B":
     case "BB":
     case "BBB":
-      formatter = dateStrGetter(TranslationType.DayPeriods, TranslationWidth.Abbreviated, FormStyle.Format, true);
+      formatter = dateStrGetter(0, TranslationWidth.Abbreviated, FormStyle.Format, true);
       break;
     case "BBBB":
-      formatter = dateStrGetter(TranslationType.DayPeriods, TranslationWidth.Wide, FormStyle.Format, true);
+      formatter = dateStrGetter(0, TranslationWidth.Wide, FormStyle.Format, true);
       break;
     case "BBBBB":
-      formatter = dateStrGetter(TranslationType.DayPeriods, TranslationWidth.Narrow, FormStyle.Format, true);
+      formatter = dateStrGetter(0, TranslationWidth.Narrow, FormStyle.Format, true);
       break;
+    // Hour in AM/PM, (1-12)
     case "h":
-      formatter = dateGetter(DateType.Hours, 1, -12);
+      formatter = dateGetter(3, 1, -12);
       break;
     case "hh":
-      formatter = dateGetter(DateType.Hours, 2, -12);
+      formatter = dateGetter(3, 2, -12);
       break;
+    // Hour of the day (0-23)
     case "H":
-      formatter = dateGetter(DateType.Hours, 1);
+      formatter = dateGetter(3, 1);
       break;
+    // Hour in day, padded (00-23)
     case "HH":
-      formatter = dateGetter(DateType.Hours, 2);
+      formatter = dateGetter(3, 2);
       break;
+    // Minute of the hour (0-59)
     case "m":
-      formatter = dateGetter(DateType.Minutes, 1);
+      formatter = dateGetter(4, 1);
       break;
     case "mm":
-      formatter = dateGetter(DateType.Minutes, 2);
+      formatter = dateGetter(4, 2);
       break;
+    // Second of the minute (0-59)
     case "s":
-      formatter = dateGetter(DateType.Seconds, 1);
+      formatter = dateGetter(5, 1);
       break;
     case "ss":
-      formatter = dateGetter(DateType.Seconds, 2);
+      formatter = dateGetter(5, 2);
       break;
+    // Fractional second
     case "S":
-      formatter = dateGetter(DateType.FractionalSeconds, 1);
+      formatter = dateGetter(6, 1);
       break;
     case "SS":
-      formatter = dateGetter(DateType.FractionalSeconds, 2);
+      formatter = dateGetter(6, 2);
       break;
     case "SSS":
-      formatter = dateGetter(DateType.FractionalSeconds, 3);
+      formatter = dateGetter(6, 3);
       break;
+    // Timezone ISO8601 short format (-0430)
     case "Z":
     case "ZZ":
     case "ZZZ":
-      formatter = timeZoneGetter(ZoneWidth.Short);
+      formatter = timeZoneGetter(
+        0
+        /* ZoneWidth.Short */
+      );
       break;
+    // Timezone ISO8601 extended format (-04:30)
     case "ZZZZZ":
-      formatter = timeZoneGetter(ZoneWidth.Extended);
+      formatter = timeZoneGetter(
+        3
+        /* ZoneWidth.Extended */
+      );
       break;
+    // Timezone GMT short format (GMT+4)
     case "O":
     case "OO":
     case "OOO":
+    // Should be location, but fallback to format O instead because we don't have the data yet
     case "z":
     case "zz":
     case "zzz":
-      formatter = timeZoneGetter(ZoneWidth.ShortGMT);
+      formatter = timeZoneGetter(
+        1
+        /* ZoneWidth.ShortGMT */
+      );
       break;
+    // Timezone GMT long format (GMT+0430)
     case "OOOO":
     case "ZZZZ":
+    // Should be location, but fallback to format O instead because we don't have the data yet
     case "zzzz":
-      formatter = timeZoneGetter(ZoneWidth.Long);
+      formatter = timeZoneGetter(
+        2
+        /* ZoneWidth.Long */
+      );
       break;
     default:
       return null;
@@ -2149,6 +2157,9 @@ var NgClass = class _NgClass {
 })();
 var NgComponentOutlet = class _NgComponentOutlet {
   _viewContainerRef;
+  // TODO(crisbeto): this should be `Type<T>`, but doing so broke a few
+  // targets in a TGP so we need to do it in a major version.
+  /** Component that should be rendered in the outlet. */
   ngComponentOutlet = null;
   ngComponentOutletInputs;
   ngComponentOutletInjector;
@@ -2166,6 +2177,13 @@ var NgComponentOutlet = class _NgComponentOutlet {
    * that are no longer referenced.
    */
   _inputsUsed = /* @__PURE__ */ new Map();
+  /**
+   * Gets the instance of the currently-rendered component.
+   * Will be null if no component has been rendered.
+   */
+  get componentInstance() {
+    return this._componentRef?.instance ?? null;
+  }
   constructor(_viewContainerRef) {
     this._viewContainerRef = _viewContainerRef;
   }
@@ -2241,6 +2259,7 @@ var NgComponentOutlet = class _NgComponentOutlet {
       ngComponentOutletNgModule: "ngComponentOutletNgModule",
       ngComponentOutletNgModuleFactory: "ngComponentOutletNgModuleFactory"
     },
+    exportAs: ["ngComponentOutlet"],
     features: [ɵɵNgOnChangesFeature]
   });
 };
@@ -2249,7 +2268,7 @@ var NgComponentOutlet = class _NgComponentOutlet {
     type: Directive,
     args: [{
       selector: "[ngComponentOutlet]",
-      standalone: true
+      exportAs: "ngComponentOutlet"
     }]
   }], () => [{
     type: ViewContainerRef
@@ -3438,10 +3457,8 @@ function defaultComparator(keyValueA, keyValueB) {
   const a = keyValueA.key;
   const b = keyValueB.key;
   if (a === b) return 0;
-  if (a === void 0) return 1;
-  if (b === void 0) return -1;
-  if (a === null) return 1;
-  if (b === null) return -1;
+  if (a == null) return 1;
+  if (b == null) return -1;
   if (typeof a == "string" && typeof b == "string") {
     return a < b ? -1 : 1;
   }
@@ -3677,7 +3694,7 @@ function isPlatformBrowser(platformId) {
 function isPlatformServer(platformId) {
   return platformId === PLATFORM_SERVER_ID;
 }
-var VERSION = new Version("19.0.5");
+var VERSION = new Version("19.1.4");
 var ViewportScroller = class _ViewportScroller {
   // De-sugared tree-shakable injection
   // See #23917
@@ -3687,7 +3704,7 @@ var ViewportScroller = class _ViewportScroller {
     ɵɵdefineInjectable({
       token: _ViewportScroller,
       providedIn: "root",
-      factory: () => isPlatformBrowser(inject(PLATFORM_ID)) ? new BrowserViewportScroller(inject(DOCUMENT), window) : new NullViewportScroller()
+      factory: () => false ? new NullViewportScroller() : new BrowserViewportScroller(inject(DOCUMENT), window)
     })
   );
 };
@@ -4111,7 +4128,6 @@ var INTERNAL_PRECONNECT_CHECK_BLOCKLIST = /* @__PURE__ */ new Set(["localhost", 
 var PRECONNECT_CHECK_BLOCKLIST = new InjectionToken(ngDevMode ? "PRECONNECT_CHECK_BLOCKLIST" : "");
 var PreconnectLinkChecker = class _PreconnectLinkChecker {
   document = inject(DOCUMENT);
-  isServer = isPlatformServer(inject(PLATFORM_ID));
   /**
    * Set of <link rel="preconnect"> tags found on this page.
    * The `null` value indicates that there was no DOM query operation performed.
@@ -4121,14 +4137,10 @@ var PreconnectLinkChecker = class _PreconnectLinkChecker {
    * Keep track of all already seen origin URLs to avoid repeating the same check.
    */
   alreadySeen = /* @__PURE__ */ new Set();
-  window = null;
+  window = this.document.defaultView;
   blocklist = new Set(INTERNAL_PRECONNECT_CHECK_BLOCKLIST);
   constructor() {
     assertDevMode("preconnect link checker");
-    const win = this.document.defaultView;
-    if (typeof win !== "undefined") {
-      this.window = win;
-    }
     const blocklist = inject(PRECONNECT_CHECK_BLOCKLIST, {
       optional: true
     });
@@ -4153,7 +4165,7 @@ var PreconnectLinkChecker = class _PreconnectLinkChecker {
    * @param originalNgSrc ngSrc value
    */
   assertPreconnect(rewrittenSrc, originalNgSrc) {
-    if (this.isServer) return;
+    if (false) return;
     const imgUrl = getUrl(rewrittenSrc, this.window);
     if (this.blocklist.has(imgUrl.hostname) || this.alreadySeen.has(imgUrl.origin)) return;
     this.alreadySeen.add(imgUrl.origin);
@@ -4200,7 +4212,7 @@ function deepForEach(input, fn) {
   }
 }
 var DEFAULT_PRELOADED_IMAGES_LIMIT = 5;
-var PRELOADED_IMAGES = new InjectionToken("NG_OPTIMIZED_PRELOADED_IMAGES", {
+var PRELOADED_IMAGES = new InjectionToken(typeof ngDevMode === "undefined" || ngDevMode ? "NG_OPTIMIZED_PRELOADED_IMAGES" : "", {
   providedIn: "root",
   factory: () => /* @__PURE__ */ new Set()
 });
@@ -4287,10 +4299,9 @@ var NgOptimizedImage = class _NgOptimizedImage {
   renderer = inject(Renderer2);
   imgElement = inject(ElementRef).nativeElement;
   injector = inject(Injector);
-  isServer = isPlatformServer(inject(PLATFORM_ID));
-  preloadLinkCreator = inject(PreloadLinkCreator);
-  // a LCP image observer - should be injected only in the dev mode
-  lcpObserver = ngDevMode ? this.injector.get(LCPImageObserver) : null;
+  // An LCP image observer should be injected only in development mode.
+  // Do not assign it to `null` to avoid having a redundant property in the production bundle.
+  lcpObserver;
   /**
    * Calculate the rewritten `src` once and store it.
    * This is needed to avoid repetitive calculations and make sure the directive cleanup in the
@@ -4310,7 +4321,7 @@ var NgOptimizedImage = class _NgOptimizedImage {
    * descriptors to generate the final `srcset` property of the image.
    *
    * Example:
-   * ```
+   * ```html
    * <img ngSrc="hello.jpg" ngSrcset="100w, 200w" />  =>
    * <img src="path/hello.jpg" srcset="path/hello.jpg?w=100 100w, path/hello.jpg?w=200 200w" />
    * ```
@@ -4380,6 +4391,17 @@ var NgOptimizedImage = class _NgOptimizedImage {
    * @internal
    */
   srcset;
+  constructor() {
+    if (ngDevMode) {
+      this.lcpObserver = this.injector.get(LCPImageObserver);
+      const destroyRef = inject(DestroyRef);
+      destroyRef.onDestroy(() => {
+        if (!this.priority && this._renderedSrc !== null) {
+          this.lcpObserver.unregisterImage(this._renderedSrc);
+        }
+      });
+    }
+  }
   /** @nodoc */
   ngOnInit() {
     performanceMarkFeature("NgOptimizedImage");
@@ -4414,16 +4436,13 @@ var NgOptimizedImage = class _NgOptimizedImage {
       assertNotMissingBuiltInLoader(this.ngSrc, this.imageLoader);
       assertNoNgSrcsetWithoutLoader(this, this.imageLoader);
       assertNoLoaderParamsWithoutLoader(this, this.imageLoader);
-      if (this.lcpObserver !== null) {
-        const ngZone2 = this.injector.get(NgZone);
-        ngZone2.runOutsideAngular(() => {
-          this.lcpObserver.registerImage(this.getRewrittenSrc(), this.ngSrc, this.priority);
-        });
-      }
+      ngZone.runOutsideAngular(() => {
+        this.lcpObserver.registerImage(this.getRewrittenSrc(), this.ngSrc, this.priority);
+      });
       if (this.priority) {
         const checker = this.injector.get(PreconnectLinkChecker);
         checker.assertPreconnect(this.getRewrittenSrc(), this.ngSrc);
-        if (!this.isServer) {
+        if (true) {
           const applicationRef = this.injector.get(ApplicationRef);
           assetPriorityCountBelowThreshold(applicationRef);
         }
@@ -4456,8 +4475,9 @@ var NgOptimizedImage = class _NgOptimizedImage {
         this.setHostAttribute("sizes", "auto, 100vw");
       }
     }
-    if (this.isServer && this.priority) {
-      this.preloadLinkCreator.createPreloadLinkTag(this.renderer, this.getRewrittenSrc(), rewrittenSrcset, this.sizes);
+    if (false) {
+      const preloadLinkCreator = this.injector.get(PreloadLinkCreator);
+      preloadLinkCreator.createPreloadLinkTag(this.renderer, this.getRewrittenSrc(), rewrittenSrcset, this.sizes);
     }
   }
   /** @nodoc */
@@ -4468,15 +4488,17 @@ var NgOptimizedImage = class _NgOptimizedImage {
     if (changes["ngSrc"] && !changes["ngSrc"].isFirstChange()) {
       const oldSrc = this._renderedSrc;
       this.updateSrcAndSrcset(true);
-      const newSrc = this._renderedSrc;
-      if (this.lcpObserver !== null && oldSrc && newSrc && oldSrc !== newSrc) {
-        const ngZone = this.injector.get(NgZone);
-        ngZone.runOutsideAngular(() => {
-          this.lcpObserver?.updateImage(oldSrc, newSrc);
-        });
+      if (ngDevMode) {
+        const newSrc = this._renderedSrc;
+        if (oldSrc && newSrc && oldSrc !== newSrc) {
+          const ngZone = this.injector.get(NgZone);
+          ngZone.runOutsideAngular(() => {
+            this.lcpObserver.updateImage(oldSrc, newSrc);
+          });
+        }
       }
     }
-    if (ngDevMode && changes["placeholder"]?.currentValue && !this.isServer) {
+    if (ngDevMode && changes["placeholder"]?.currentValue && true && true) {
       assertPlaceholderDimensions(this, this.imgElement);
     }
   }
@@ -4611,14 +4633,6 @@ var NgOptimizedImage = class _NgOptimizedImage {
     const removeErrorListenerFn = this.renderer.listen(img, "error", callback);
     callOnLoadIfImageIsLoaded(img, callback);
   }
-  /** @nodoc */
-  ngOnDestroy() {
-    if (ngDevMode) {
-      if (!this.priority && this._renderedSrc !== null && this.lcpObserver !== null) {
-        this.lcpObserver.unregisterImage(this._renderedSrc);
-      }
-    }
-  }
   setHostAttribute(name, value) {
     this.renderer.setAttribute(this.imgElement, name, value);
   }
@@ -4670,7 +4684,7 @@ var NgOptimizedImage = class _NgOptimizedImage {
         "[style.filter]": `placeholder && shouldBlurPlaceholder(placeholderConfig) ? "blur(${PLACEHOLDER_BLUR_AMOUNT}px)" : null`
       }
     }]
-  }], null, {
+  }], () => [], {
     ngSrc: [{
       type: Input,
       args: [{
@@ -5118,9 +5132,9 @@ export {
 
 @angular/common/fesm2022/common.mjs:
   (**
-   * @license Angular v19.0.5
+   * @license Angular v19.1.4
    * (c) 2010-2024 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-HJSLYVXA.js.map
+//# sourceMappingURL=chunk-H7CEYIRM.js.map
