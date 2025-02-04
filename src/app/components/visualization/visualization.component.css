@@ -428,6 +428,7 @@ body {
 
 
 
+    /***** SPINNER LOADER *****/
     .spinner-container {
       display: flex;
       justify-content: center;

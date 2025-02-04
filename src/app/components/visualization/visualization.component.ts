@@ -23,7 +23,6 @@ export class VisualizationComponent implements OnInit {
   filteredCities: City[] = [];
   infoCity: City = { id: 0, numeroStation: 0, ville: '', latitude: 0, longitude: 0, altitude: 0 };
 
-  // Options du graphique
   view: [number, number] = [1000, 600]; 
   showXAxis = true;
   showYAxis = true;
@@ -54,17 +53,15 @@ export class VisualizationComponent implements OnInit {
   }
 
   private updateChart() {
-    // Clés à afficher (sans num_station)
     const keys = ["temperature", "pression", "wind_speed", "precipitation"];
   
-    // Transformation des données pour ngx-charts (une série par clé)
     this.data = keys.map(key => ({
-      name: key, // Nom de la série
+      name: key,
       series: this.rawData.map(item => ({
-        name: item.annee.toString(), // Axe X : Année
+        name: item.annee.toString(),
         value: key === "precipitation" 
-          ? (item[key as keyof YearlyStat] as number) / 10  // Division par 1000 si précipitation
-          : item[key as keyof YearlyStat] // Valeur normale sinon
+          ? (item[key as keyof YearlyStat] as number) / 10 
+          : item[key as keyof YearlyStat]
       }))
     }));
   

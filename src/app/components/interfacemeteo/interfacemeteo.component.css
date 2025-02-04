@@ -425,3 +425,19 @@ body {
     .weather-icon:hover {
       transform: scale(1.2);
     }
+
+
+/***** SPINNER LOADER *****/
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.no-data {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #555;
+}

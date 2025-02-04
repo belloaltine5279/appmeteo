@@ -68,8 +68,14 @@
       
     
       
-    
-      @if (weatherData.length > 0) {
+      <div *ngIf="isLoading" class="spinner-container d-flex flex-column">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+        <span class="">Chargement...</span>
+      </div>
+
+    <div *ngIf="!isLoading && weatherData.length > 0"></div>
         <div class="weather-grid">
           @for (day of weatherData; track day.date) {
             <div class="weather-card" (click)="showDetails(day)">
@@ -113,12 +119,11 @@
             </div>
           }
         </div>
-      } @else {
-        <div class="no-results">
+      
+        <div *ngIf="!isLoading && weatherData.length === 0" class="">
           Aucune donnée météo disponible pour cette ville ou cette date.
           Veuillez sélectionner une ville et une date valides.
         </div>
-      }
     
       @if (selectedDay) {
         <div class="fullscreen-details">

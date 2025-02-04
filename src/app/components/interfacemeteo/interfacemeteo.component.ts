@@ -25,7 +25,7 @@ export class InterfacemeteoComponent implements OnInit {
   infoCity: City = { id: 0, numeroStation: 0, ville: '', latitude: 0, longitude: 0, altitude: 0 };
 
 
-
+  isLoading: boolean = false;
 
   weatherData: WeatherDay[] = [];
   selectedDay: WeatherDay | null = null;
@@ -81,11 +81,8 @@ export class InterfacemeteoComponent implements OnInit {
     console.log("voici le tri: ", groupedData);
     this.data = [];
     groupedData.forEach((g) => {
-      //console.log(this.calculateAverageForAllParams(g));
       this.data.push(this.calculateAverageForAllParams(g));
     })
-
-    //console.log("voici data: ", this.data);
     
   }
 
@@ -156,12 +153,6 @@ export class InterfacemeteoComponent implements OnInit {
     });
   }
 
- 
-
-
-
-
-
 
   onSearchInput() {
     if (this.searchCity.trim()) {
@@ -221,6 +212,7 @@ export class InterfacemeteoComponent implements OnInit {
 }
 
   generateWeatherData(city: City, startDate: Date) {
+    this.isLoading = true;
     this.weatherData = [];
 
     this.infoCity = city;
@@ -229,7 +221,6 @@ export class InterfacemeteoComponent implements OnInit {
     this.getInfo(city.numeroStation, startDate.toISOString().split('T')[0]);
     setTimeout(() => {
       console.log("Données dans data après un délai:", this.data);
-
       
       this.data.reverse().forEach((d) => {
         console.log("Info sur: "+city.ville +" n°"+d.numer_sta+" le: "+d.date+": ", d);
@@ -253,12 +244,9 @@ export class InterfacemeteoComponent implements OnInit {
           longitude: city.longitude,
           hourlyData: this.generateHourlyData(d.t, d.date)
         });
-
-        console.log(this.filterByDate(this.data_details, d.date));
       })
-
-      
-    }, 300);
+      this.isLoading = false;
+    }, 500);
   }
 
   windQuality(humidity: number, windSpeed: number, temperature: number, precipitation: number = 0): string {
@@ -386,9 +374,9 @@ export class InterfacemeteoComponent implements OnInit {
 
 
   /**
-   * Méthode appelée lorsque la date sélectionnée change.
-   * Rechercher une ville correspondant au nom de la ville actuelle
-   * et génère les données météo pour la date sélectionnée.
+   * Called when the user changes the selected date.
+   * If the search input is not empty and a city is found,
+   * it will generate the weather data for the selected date.
    */
   onDateChange() {
     if (this.searchCity && this.selectedDate) {
