@@ -3,15 +3,21 @@
 
 
   <section class="container d-flex align-items-center justify-content-around mb-5">
-    <div class="">
+    <div class="d-flex align-items-center">
       <div class="search-wrapper">
-        <input
-          type="text"
-          class="search-input"
-          [(ngModel)]="searchCity"
-          (input)="onSearchInput()"
-          placeholder="Rechercher une ville..."
-        />
+        <div class="search-container">
+          <input
+            type="text"
+            class="search-input"
+            [(ngModel)]="searchCity"
+            (input)="onSearchInput()"
+            placeholder="Rechercher une ville..."
+          />
+          
+          <button *ngIf="searchCity" class="clear-btn" (click)="clearSearch()">
+            ✖
+          </button>
+        </div>
         @if (showSuggestions && filteredCities.length > 0) {
           <div class="suggestions-container">
             @for (city of filteredCities; track city.ville) {
@@ -27,7 +33,7 @@
       </div>
     </div>
 
-    <div class="">
+    <div>
       <div class="popover__wrapper">
         <div href="#">
           <div class="weather-card">
@@ -49,7 +55,6 @@
   
 
   <div class="container d-flex justify-content-center">
-    <!-- Loader -->
     <div *ngIf="isLoading" class="spinner-container d-flex flex-column">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Chargement...</span>
@@ -57,7 +62,6 @@
       <span class="">Chargement...</span>
     </div>
   
-    <!-- Graphique -->
     <div *ngIf="!isLoading && data.length > 0" class="w-100">
       <ngx-charts-line-chart 
         [view]="view"
@@ -76,7 +80,6 @@
       </ngx-charts-line-chart>
     </div>
   
-    <!-- Message si aucune donnée -->
     <div *ngIf="!isLoading && data.length === 0" class="no-data">
       <p>Aucune donnée à afficher.</p>
     </div>

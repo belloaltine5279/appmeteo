@@ -69,6 +69,11 @@ export class VisualizationComponent implements OnInit {
 }
 
   
+clearSearch() {
+  this.searchCity = '';
+  this.filteredCities = [];
+  this.showSuggestions = false;
+}
   
 
   private getYearlyStats(num_station: number): void {

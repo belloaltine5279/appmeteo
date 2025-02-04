@@ -371,8 +371,6 @@ export class InterfacemeteoComponent implements OnInit {
     }
   }
 
-
-
   /**
    * Called when the user changes the selected date.
    * If the search input is not empty and a city is found,
@@ -388,5 +386,11 @@ export class InterfacemeteoComponent implements OnInit {
         this.generateWeatherData(city, new Date(this.selectedDate));
       }
     }
+  }
+
+  clearSearch() {
+    this.searchCity = '';
+    this.filteredCities = [];
+    this.showSuggestions = false;
   }
 }

@@ -10,15 +10,21 @@
     </div>
       
       
-      <div class="search-container">
+      <div class="d-flex align-items-center">
         <div class="search-wrapper">
-          <input
-            type="text"
-            class="search-input"
-            [(ngModel)]="searchCity"
-            (input)="onSearchInput()"
-            placeholder="Rechercher une ville..."
-          />
+          <div class="search-container">
+            <input
+              type="text"
+              class="search-input"
+              [(ngModel)]="searchCity"
+              (input)="onSearchInput()"
+              placeholder="Rechercher une ville..."
+            />
+            
+            <button *ngIf="searchCity" class="clear-btn" (click)="clearSearch()">
+              ✖
+            </button>
+          </div>
           @if (showSuggestions && filteredCities.length > 0) {
             <div class="suggestions-container">
               @for (city of filteredCities; track city.ville) {
@@ -41,8 +47,7 @@
           [max]="maxDate"
         />
       </div>
-    
-    
+      
       <div class="container">
         <div class="popover__wrapper">
           <div href="#">

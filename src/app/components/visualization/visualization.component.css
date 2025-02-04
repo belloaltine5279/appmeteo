@@ -443,3 +443,57 @@ body {
       color: #555;
     }
     
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  padding-right: 30px; /* Espace pour le bouton */
+}
+
+.clear-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #888;
+}
+
+.clear-btn:hover {
+  color: #333;
+}
+
+
+/***** search input ******/
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  padding-right: 30px; /* Espace pour le bouton */
+}
+
+.clear-btn {
+  position: absolute;
+  right: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #888;
+}
+
+.clear-btn:hover {
+  color:red;
+  transition: all ease-in-out 0.5s;
+  transform: rotate(90deg);
+}
