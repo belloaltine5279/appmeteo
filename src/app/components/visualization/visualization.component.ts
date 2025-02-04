@@ -1,127 +1,129 @@
 import { Component, OnInit } from '@angular/core';
-import { DataService } from '../../data.service';
 import { CommonModule } from '@angular/common';
-import { Observable, throwError } from 'rxjs';
-import { catchError, delay, switchMap } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { DataService } from '../../data.service';
+import { City } from '../../models/city';
+import { YearlyStat } from '../../models/yearly_stat';
 
 @Component({
   selector: 'app-visualization',
   standalone: true,
   templateUrl: './visualization.component.html',
   styleUrls: ['./visualization.component.css'],
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgxChartsModule], 
 })
 export class VisualizationComponent implements OnInit {
-  data: any [] = [];
-  ngOnInit(): void {
-  }
-/*
+  data: any[] = [];
+  isLoading: boolean = false;
+  cities: City[] = [];
+  rawData: YearlyStat[] = [];
+  searchCity: string = '';
+  showSuggestions: boolean = false;
+  filteredCities: City[] = [];
+  infoCity: City = { id: 0, numeroStation: 0, ville: '', latitude: 0, longitude: 0, altitude: 0 };
 
-  searchQuery: string = '';
-  filteredCities: any[] = [];
-  selectedCity: any = null;
-  weatherData: any = null;
-  currentWeather: any = null;
-
-
-  // Données statiques des villes
-  cities = [
-    { id: 1, numerostation: '001', ville: 'Paris', long: 2.3522, lat: 48.8566 },
-    { id: 2, numerostation: '002', ville: 'Marseille', long: 5.3698, lat: 43.2965 },
-    { id: 3, numerostation: '003', ville: 'Lyon', long: 4.8357, lat: 45.7640 },
-    { id: 4, numerostation: '004', ville: 'Toulouse', long: 1.4442, lat: 43.6047 },
-    { id: 5, numerostation: '005', ville: 'Nice', long: 7.2620, lat: 43.7102 },
-    { id: 6, numerostation: '006', ville: 'Perpignan', long: 7.2620, lat: 43.7102 },
-    { id: 7, numerostation: '007', ville: 'Dijon', long: 47.2188, lat: 47.2188 },
-  ];
-
-  // Données statiques météorologiques liées aux stations
-  weatherDataList = [
-    { numerostation: '001', temperature: 15, humidity: 80 },
-    { numerostation: '002', temperature: 18, humidity: 70 },
-    { numerostation: '003', temperature: 10, humidity: 85 },
-    { numerostation: '004', temperature: 20, humidity: 65 },
-    { numerostation: '005', temperature: 22, humidity: 60 },
-    { numerostation: '006', temperature: 22, humidity: 60 },
-    { numerostation: '007', temperature: 22, humidity: 60 },
-  ];
+  // Options du graphique
+  view: [number, number] = [1000, 600]; 
+  showXAxis = true;
+  showYAxis = true;
+  gradient = false;
+  showLegend = true;
+  showXAxisLabel = true;
+  xAxisLabel = 'Année';
+  showYAxisLabel = true;
+  yAxisLabel = 'Valeurs';
 
 
-  private retryAttempt = 0;  // Compteur pour les tentatives de récupération
-  private maxRetry = 5;  // Nombre maximum de tentatives
 
   constructor(private dataService: DataService) {}
+
   ngOnInit(): void {
-    this.getData();
-    this.selectedCity = this.cities.find(city => city.ville === 'Dijon');
-    // this.filteredCities = this.cities;
+    this.getLocations();
   }
 
-  getData(): void {
-    this.makeApiRequest()
-      .subscribe({
-        next: (data) => {
-          this.data = data;
-          console.log(data);
-          this.retryAttempt = 0;  // Réinitialiser le compteur en cas de succès
+
+  generateChart(numStation: number){
+    this.isLoading = true;
+    this.getYearlyStats(numStation);
+  
+    setTimeout(() => {
+    this.updateChart();
+    this.isLoading = false;
+    },1000);
+  }
+
+  private updateChart() {
+    // Clés à afficher (sans num_station)
+    const keys = ["temperature", "pression", "wind_speed", "precipitation"];
+  
+    // Transformation des données pour ngx-charts (une série par clé)
+    this.data = keys.map(key => ({
+      name: key, // Nom de la série
+      series: this.rawData.map(item => ({
+        name: item.annee.toString(), // Axe X : Année
+        value: key === "precipitation" 
+          ? (item[key as keyof YearlyStat] as number) / 10  // Division par 1000 si précipitation
+          : item[key as keyof YearlyStat] // Valeur normale sinon
+      }))
+    }));
+  
+    console.log("Graphique mis à jour", this.data);
+}
+
+  
+  
+
+  private getYearlyStats(num_station: number): void {
+    this.dataService.getYearlyStats(num_station).subscribe({
+      next: (response: any) => {
+        this.rawData = response;
+        console.log("Chargement des données: ", this.rawData);
+      },
+      error: (err) => {
+        console.error('Erreur:', err);
+      }
+    });
+  }
+
+
+    private getLocations(): void {
+      this.dataService.getLocalisations().subscribe({
+        next: (response: City[]) => {
+          this.cities = response;
+          console.log('Villes chargées:', this.cities);
+          
+          const c = this.cities.find(c => c.ville.includes('DIJON')) || this.cities[0];
+          if ( c ) {
+            this.searchCity =  c .ville;
+            this.infoCity = c;
+            this.generateChart(c.numeroStation);
+          }
         },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-        },
-      });
-  }
-  ;
-
-  getWeatherData(stationNumber: string) {
-
-    return this.weatherDataList.find((data) => data.numerostation === stationNumber);
-  }
-
-  // Méthode pour afficher les détails (par exemple, une action sur un bouton)
-  viewDetails(city: any) {
-    alert(`Détails pour ${city.ville}: ${city.numerostation}`);
-  }
-
-  makeApiRequest(): Observable<any> {
-    return this.dataService.getApidata().pipe(
-      catchError((error) => {
-        if (error.status === 429 && this.retryAttempt < this.maxRetry) {
-          this.retryAttempt++;
-          const retryDelay = Math.pow(2, this.retryAttempt) * 1000; // Backoff exponentiel
-          console.log(`Retrying after ${retryDelay / 1000} seconds...`);
-          return new Observable<void>((observer) => { // Utilisation de new Observable et typage explicite
-            setTimeout(() => {
-              observer.next(); // Démarrer la prochaine tentative après le délai
-              observer.complete(); // Marquer la tentative comme terminée
-            }, retryDelay);
-          }).pipe(
-            switchMap(() => this.makeApiRequest()) // Retenter après le délai
-          );
+        error: (err) => {
+          console.error('Erreur:', err);
         }
-        return throwError(() => error);  // En cas d'erreur autre que 429, propager l'erreur
-      })
-    );
-  }
-
-  onSearch(): void {
-    if (this.searchQuery.trim() === '') {
-      this.filteredCities = [];
-      // this.selectedCity = this.cities.find(city => city.ville === 'Dijon');
-    } else {
-      this.filteredCities = this.cities.filter(city =>
-        city.ville.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
+      });
     }
-  }
 
-  // Sélectionner une ville et récupérer les données météo
-  onCitySelect(city: any): void {
-    this.selectedCity = city;
-    this.weatherData = this.weatherDataList.find(
-      (data) => data.numerostation === city.numerostation
-    );
-    this.filteredCities = []; // Masquer la liste des suggestions après sélection
-  }
-*/
+    onSearchInput() {
+      if (this.searchCity.trim()) {
+        this.showSuggestions = true;
+        this.filteredCities = this.cities.filter(city =>
+          city.ville.toLowerCase().includes(this.searchCity.toLowerCase())
+        );
+      } else {
+        this.showSuggestions = false;
+        this.filteredCities = [];
+      }
+    }
+  
+    selectCity(city: City) {
+      this.searchCity = city.ville;
+      this.showSuggestions = false;
+      this.infoCity = city;
+      this.generateChart(city.numeroStation);
+
+      console.log(city.numeroStation)
+    }
 }

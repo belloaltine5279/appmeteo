@@ -10,6 +10,7 @@ export class DataService {
   private apiUrl_localisation = 'http://172.31.60.248:8080/api/localisations'
   private apiClimatTotal = "http://172.31.60.248:8080/api/donnees-climatiques/count"
   private apiInfoCity =  "http://172.31.60.248:8080/api/donnees-climatiques/info/"
+  private apiYearlyStat = "http://172.31.60.248:8080/api/donnees-climatiques/moyenneAll/"
 
   constructor(private http: HttpClient) {}
  
@@ -44,5 +45,8 @@ export class DataService {
     return this.http.get(this.apiInfoCity+numStation+"?dateDebut="+dateDebutFormatted+"&dateFin="+dateFinFormatted);
   }
   
+  getYearlyStats(numStation: number): Observable<any> {
+    return this.http.get(this.apiYearlyStat+numStation);
+  }
   
 }
