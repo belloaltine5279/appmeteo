@@ -6,6 +6,7 @@ import { VisualizationComponent } from './components/visualization/visualization
 import { DownloadComponent } from './components/download/download.component';
 import { HelpComponent } from './components/help/help.component';
 import {InterfacemeteoComponent} from './components/interfacemeteo/interfacemeteo.component';
+import { LlmComponent } from './llm/llm.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -15,4 +16,5 @@ export const routes: Routes = [
   { path: 'download', component: DownloadComponent },
   { path: 'help', component: HelpComponent },
   { path: 'interfacemeteo', component: InterfacemeteoComponent },
+  { path: 'llm', component: LlmComponent}
 ];

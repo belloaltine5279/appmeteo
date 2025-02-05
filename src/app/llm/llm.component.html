@@ -1,0 +1,12 @@
+<div class="chat-container my-5">
+  <div class="d-flex flex-column align-items-center gap-1">
+    <textarea [(ngModel)]="userMessage" placeholder="Posez votre question..." (keyup.enter)="sendMessage()"> </textarea>
+    <button (click)="sendMessage()" class="btn btn-outline-primary">Envoyer</button>
+  </div>
+
+  <div class="container mt-5">
+    <div *ngIf="isWaiting" class="loading">Chargement...</div>
+    <div class="response-box" [innerHTML]="formattedResponse"></div>
+  </div>
+  
+</div>
