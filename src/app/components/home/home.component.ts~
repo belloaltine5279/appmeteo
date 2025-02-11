@@ -13,7 +13,7 @@ export class HomeComponent {
   // Cette méthode sera appelée lorsque l'on clique sur le bouton pour activer/désactiver le son
   toggleMute() {
     const video: HTMLVideoElement = this.videoElementRef.nativeElement;
-    video.muted = false; // Change l'état de l'attribut "muted"
+    video.muted = !video.muted; // Change l'état de l'attribut "muted"
   }
 
   // Cette méthode est appelée après la vue initiale pour s'assurer que le DOM est prêt

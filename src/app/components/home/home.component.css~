@@ -129,7 +129,7 @@
   .video-background {
     position: relative;
     width: 100%;
-    height: 50vh;  /* Prendre toute la hauteur de la fenêtre */
+    height: 50  /* Prendre toute la hauteur de la fenêtre */
     overflow: hidden;  /* Empêcher tout débordement */
   }
 

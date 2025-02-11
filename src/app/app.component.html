@@ -1,12 +1,103 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 
-<nav>
-  <a href="/">Accueil</a>
-  <a href="/login">Connexion/Inscription</a>
-  <a href="/data-consultation">Consultation des données</a>
-  <a href="/visualization">Visualisation</a>
-  <a href="/interfacemeteo">Interface Météo</a>
-  <a href="/download">Extraction des données</a>
-  <a href="/help">Aide</a>
+<nav class="navbar navbar-expand-lg bg-gradient-to-r from-cyan-500 to-blue-500 border-0">
+  <div class="container-fluid">
+
+    <a href="/" class="navbar-brand d-flex align-items-center">
+      <img src="/assets/img/logo/logo-meteo.png" class="logo-img" alt="Logo Météo" />
+      <span class="ms-3 text-brand">iMétéo</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 mx-auto">
+        <li class="nav-item">
+          <a href="/data-consultation" class="nav-link">Consultation des données</a>
+        </li>
+        <li class="nav-item">
+          <a href="/visualization" class="nav-link">Visualisations</a>
+        </li>
+        <li class="nav-item">
+          <a href="/interfacemeteo" class="nav-link">Météo</a>
+        </li>
+        <li class="nav-item">
+          <a href="/download" class="nav-link">Extraction</a>
+        </li>
+        <li class="nav-item">
+          <a href="/help" class="nav-link">Aide</a>
+        </li>
+      </ul>
+      <!-- app.component.html -->
+      <div class="d-flex align-items-center position-relative p-4">
+        <!-- Icône de recherche ou flèche de validation -->
+<!--        <button class="btn search-icon" (click)="toggleSearch()">-->
+<!--          <i class="bi" [ngClass]="{'bi-search': !isSearchActive, 'bi-arrow-right': isSearchActive}"></i>-->
+<!--        </button>-->
+          <button class="search-button d-flex align-items-center" (click)="toggleSearch()">
+<!--            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+<!--              <path d="M15.5 14H14.71L14.43 13.73C15.63 12.33 16.25 10.42 16 8.38C15.5 4.61 12.27 1.39 8.5 2C4.73 2.61 1.5 5.84 2 9.61C2.61 13.38 5.84 16.6 9.61 16C11.64 15.75 13.55 15.13 14.95 13.93L15.22 14.21V15L20 19.78L21.78 18L17 13.22V14L15.5 14ZM9 14C6.24 14 4 11.76 4 9C4 6.24 6.24 4 9 4C11.76 4 14 6.24 14 9C14 11.76 11.76 14 9 14Z" fill="black"/>-->
+<!--            </svg>-->
+              <i class="fas fa-search m-2" [class.search]="!isSearchActive" [class.arrow]="isSearchActive"></i>
+          </button>
+        <!-- Barre de recherche, affichée conditionnellement avec Angular -->
+        <input type="text" class="form-control search-bar mx-2" [@searchAnimation]="isSearchActive ? 'visible' : 'hidden'" [ngClass]="{'show': isSearchActive}" placeholder="Rechercher..." [(ngModel)]="searchQuery" (keydown.enter)="submitSearch()">
+      </div>
+
+
+      <div class="connexion ms-auto">
+          <a href="/login" class=" text-light btn btn-primary px-4">Connexion</a>
+      </div>
+    </div>
+  </div>
 </nav>
+
+
+<!--<nav class="nav-container">-->
+<!--    <div class="nav-content">-->
+<!--        &lt;!&ndash; Logo and Brand &ndash;&gt;-->
+<!--        <a href="/" class="brand-container">-->
+<!--            <img src="/assets/img/logo/logo-meteo.png" class="brand-logo" alt="Logo Météo" />-->
+<!--            <span class="brand-text">iMétéo</span>-->
+<!--        </a>-->
+
+<!--        &lt;!&ndash; Mobile Menu Button &ndash;&gt;-->
+<!--        <button class="menu-button" (click)="toggleMenu()" [class.active]="isMenuOpen"  data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">-->
+<!--            <span class="menu-icon"></span>-->
+<!--        </button>-->
+
+<!--        &lt;!&ndash; Navigation Items &ndash;&gt;-->
+<!--        <div class="nav-items collapse navbar-collapse" id="navbarSupportedContent" [class.open]="isMenuOpen">-->
+<!--            <ul class="nav-list">-->
+<!--                <li><a href="/data-consultation" class="nav-link">Consultation des données</a></li>-->
+<!--                <li><a href="/visualization" class="nav-link">Visualisations</a></li>-->
+<!--                <li><a href="/interfacemeteo" class="nav-link">Météo</a></li>-->
+<!--                <li><a href="/download" class="nav-link">Extraction</a></li>-->
+<!--                <li><a href="/help" class="nav-link">Aide</a></li>-->
+<!--            </ul>-->
+
+<!--            &lt;!&ndash; Search Bar &ndash;&gt;-->
+<!--            <div class="search-container">-->
+<!--                <input-->
+<!--                        type="text"-->
+<!--                        class="search-input"-->
+<!--                        [@searchAnimation]="isSearchActive ? 'visible' : 'hidden'"-->
+<!--                        [(ngModel)]="searchQuery"-->
+<!--                        (keydown.enter)="submitSearch()"-->
+<!--                        placeholder="Rechercher..."-->
+<!--                >-->
+<!--                <button class="search-button" (click)="toggleSearch()">-->
+<!--                    <i class="icon" [class.search]="!isSearchActive" [class.arrow]="isSearchActive"></i>-->
+<!--                </button>-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; Login Button &ndash;&gt;-->
+<!--            <a href="/login" class="login-button">Connexion</a>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</nav>-->
 <router-outlet></router-outlet>

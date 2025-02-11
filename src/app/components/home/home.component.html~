@@ -3,7 +3,7 @@
   <source src="/assets/video/weather.mp4" type="video/mp4">
 </video>
 <!--bg-gradient-to-r from-cyan-500 to-blue-500-->
-  <div class="content mt-5">
+  <div class="content mt-5 bg-black">
     <!-- Section principale du contenu -->
     <section class="bg-gradient-to-r from-cyan-500 to-blue-500 dark:bg-gray-900 main-content">
       <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">

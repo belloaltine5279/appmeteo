@@ -88,6 +88,7 @@ nav {
 
       /*background-color: cornflowerblue;*/
       border-radius: 15px;
+      color: white ;
       background-color: white;
       animation: linear 1s;
       margin: 19px;

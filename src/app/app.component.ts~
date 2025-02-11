@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';  // Importation de CommonModule
 import { FormsModule } from '@angular/forms';    // Importation de FormsModule
-import { trigger, state, style, animate, transition } from '@angular/animations';
 
 
 @Component({
